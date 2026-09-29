@@ -1,0 +1,177 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>CSV文字化け変換ツール（UTF-8 ⇔ Shift_JIS・BOM付き）| Excelで開けるCSVに | ツールばこ</title>
+<meta name="description" content="Excelで文字化けするCSVファイルを、BOM付きUTF-8またはShift_JIS（CP932）に変換してダウンロードできる無料ツール。文字コードの自動判定、改行コード（CRLF/LF）の変換、Shift_JISで表せない文字の検出に対応。ファイルはブラウザ内で処理され、サーバーへ送信されません。">
+<link rel="canonical" href="https://yyy8m.github.io/csv-mojibake/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="CSV文字化け変換ツール（UTF-8 ⇔ Shift_JIS・BOM付き）| Excelで開けるCSVに | ツールばこ">
+<meta property="og:description" content="Excelで文字化けするCSVファイルを、BOM付きUTF-8またはShift_JIS（CP932）に変換してダウンロードできる無料ツール。文字コードの自動判定、改行コード（CRLF/LF）の変換、Shift_JISで表せない文字の検出に対応。ファイルはブラウザ内で処理され、サーバーへ送信されません。">
+<meta property="og:url" content="https://yyy8m.github.io/csv-mojibake/">
+<meta property="og:site_name" content="ツールばこ">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/style.css?v=1.0">
+
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebApplication", "name": "CSVの文字化けを直す 文字コード変換（UTF-8 ⇔ Shift_JIS）", "description": "Excelで文字化けするCSVファイルを、BOM付きUTF-8またはShift_JIS（CP932）に変換してダウンロードできる無料ツール。文字コードの自動判定、改行コード（CRLF/LF）の変換、Shift_JISで表せない文字の検出に対応。ファイルはブラウザ内で処理され、サーバーへ送信されません。", "url": "https://yyy8m.github.io/csv-mojibake/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (Web browser)", "inLanguage": "ja", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "JPY"}}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "ツールばこ", "item": "https://yyy8m.github.io/"}, {"@type": "ListItem", "position": 2, "name": "CSVの文字化けを直す 文字コード変換（UTF-8 ⇔ Shift_JIS）", "item": "https://yyy8m.github.io/csv-mojibake/"}]}]}</script>
+</head>
+<body>
+<header class="site"><div class="in">
+<a class="logo" href="../">🧰 ツール<span>ばこ</span></a>
+<nav><a href="../#jimu">事務・経理</a><a href="../#moji">文字・テキスト</a><a href="../#tetsuzuki">手続き</a><a href="../#data">データ</a><a href="../offline/">オフライン版</a></nav>
+</div></header>
+
+<main>
+<div class="crumb"><a href="../">ツールばこ</a> › データ・開発</div>
+<h1>CSVの文字化けを直す 文字コード変換（UTF-8 ⇔ Shift_JIS）</h1>
+<p class="lead">Excelで開くと文字化けするCSVを、BOM付きUTF-8やShift_JISに変換してダウンロード。ファイルはアップロードされません。<br><span class="badge">無料</span><span class="badge">登録不要</span><span class="badge">データ送信なし</span></p>
+<script src="../assets/common.js?v=1.0"></script>
+<div class="card">
+  <div class="drop" id="cm-drop">
+    <p><strong>CSV・テキストファイルをここにドロップ</strong><br>または <input type="file" id="cm-file" accept=".csv,.txt,.tsv,text/*"></p>
+    <p class="note">ファイルはアップロードされず、このブラウザの中だけで変換されます。</p>
+  </div>
+  <div id="cm-info" class="note" style="margin-top:10px"></div>
+  <div class="row" style="margin-top:6px">
+    <div>
+      <label for="cm-enc">変換後の文字コード</label>
+      <select id="cm-enc">
+        <option value="utf8bom" selected>UTF-8（BOM付き）— Excel推奨</option>
+        <option value="sjis">Shift_JIS（CP932）— 古いシステム向け</option>
+        <option value="utf8">UTF-8（BOMなし）— Webシステム・プログラム向け</option>
+      </select>
+    </div>
+    <div>
+      <label for="cm-eol">改行コード</label>
+      <select id="cm-eol">
+        <option value="keep">そのまま</option>
+        <option value="crlf" selected>CRLF（Windows / Excel）</option>
+        <option value="lf">LF（Mac / Linux）</option>
+      </select>
+    </div>
+  </div>
+  <button type="button" id="cm-go" disabled>変換してダウンロード</button>
+  <div id="cm-warn" style="margin-top:10px"></div>
+  <h3>プレビュー（先頭20行）</h3>
+  <div class="scroll"><table id="cm-preview"><tr><td class="note">ファイルを選ぶと表示されます</td></tr></table></div>
+  <details style="margin-top:14px"><summary>ファイルではなくテキストを貼り付けて変換する</summary>
+    <textarea id="cm-text" placeholder="ここに貼り付けたテキストを、上の設定でファイルとして保存できます"></textarea>
+    <button type="button" class="sub" id="cm-textgo">テキストを変換して保存</button>
+  </details>
+</div>
+
+<script>
+(function () {
+  var $ = TB.$, current = null;
+
+  function detect(buf) {
+    var b = new Uint8Array(buf);
+    if (b[0] === 0xEF && b[1] === 0xBB && b[2] === 0xBF) return { enc: 'utf-8', label: 'UTF-8（BOM付き）', skip: 3 };
+    if (b[0] === 0xFF && b[1] === 0xFE) return { enc: 'utf-16le', label: 'UTF-16LE（BOM付き）', skip: 2 };
+    if (b[0] === 0xFE && b[1] === 0xFF) return { enc: 'utf-16be', label: 'UTF-16BE（BOM付き）', skip: 2 };
+    try { new TextDecoder('utf-8', { fatal: true }).decode(b); return { enc: 'utf-8', label: 'UTF-8（BOMなし）', skip: 0 }; }
+    catch (e) { return { enc: 'shift_jis', label: 'Shift_JIS（CP932）と推定', skip: 0 }; }
+  }
+
+  function parseCsvPreview(text, maxRows) {
+    var rows = [], row = [], field = '', q = false, i, c;
+    var delim = (text.split('\n')[0].split('\t').length > text.split('\n')[0].split(',').length) ? '\t' : ',';
+    for (i = 0; i < text.length && rows.length < maxRows; i++) {
+      c = text[i];
+      if (q) {
+        if (c === '"') { if (text[i + 1] === '"') { field += '"'; i++; } else q = false; }
+        else field += c;
+      } else if (c === '"') q = true;
+      else if (c === delim) { row.push(field); field = ''; }
+      else if (c === '\n') { row.push(field.replace(/\r$/, '')); rows.push(row); row = []; field = ''; }
+      else field += c;
+    }
+    if ((field || row.length) && rows.length < maxRows) { row.push(field); rows.push(row); }
+    return rows;
+  }
+
+  function load(file) {
+    var r = new FileReader();
+    r.onload = function () {
+      var d = detect(r.result);
+      var text = new TextDecoder(d.enc).decode(new Uint8Array(r.result).subarray(d.skip));
+      var crlf = (text.match(/\r\n/g) || []).length, lf = (text.match(/\n/g) || []).length - crlf;
+      current = { name: file.name, text: text };
+      $('cm-info').innerHTML = '<span class="badge">' + TB.esc(file.name) + '</span> 判定: <b>' + d.label + '</b> ／ 改行: ' +
+        (crlf && !lf ? 'CRLF' : lf && !crlf ? 'LF' : crlf || lf ? '混在' : 'なし') + ' ／ ' + (r.result.byteLength / 1024).toFixed(1) + ' KB';
+      var rows = parseCsvPreview(text, 20);
+      $('cm-preview').innerHTML = rows.map(function (row, i) {
+        return '<tr>' + row.map(function (f) { return (i ? '<td>' : '<th>') + TB.esc(f) + (i ? '</td>' : '</th>'); }).join('') + '</tr>';
+      }).join('');
+      $('cm-go').disabled = false;
+      $('cm-warn').innerHTML = '';
+    };
+    r.readAsArrayBuffer(file);
+  }
+
+  function convert(text, baseName) {
+    var eol = $('cm-eol').value, enc = $('cm-enc').value;
+    if (eol === 'crlf') text = text.replace(/\r?\n/g, '\r\n');
+    else if (eol === 'lf') text = text.replace(/\r\n/g, '\n');
+    var bytes, suffix, warn = '';
+    if (enc === 'sjis') {
+      var r = TB.encodeSjis(text, '？');
+      bytes = r.bytes; suffix = '_sjis';
+      if (r.bad.length) {
+        var uniq = []; r.bad.forEach(function (b) { if (uniq.indexOf(b.ch) < 0) uniq.push(b.ch); });
+        warn = '<p class="err">Shift_JISで表せない文字が ' + r.bad.length + ' 箇所あり、「？」に置き換えました: ' +
+          uniq.slice(0, 40).map(function (c) { return '<mark class="bad">' + TB.esc(c) + '</mark>'; }).join(' ') +
+          '<br>絵文字・一部の旧字体（𠮷 など）が該当します。元の文字を残したい場合は「UTF-8（BOM付き）」を選んでください。</p>';
+      }
+    } else {
+      var u = new TextEncoder().encode(text);
+      if (enc === 'utf8bom') { bytes = new Uint8Array(u.length + 3); bytes.set([0xEF, 0xBB, 0xBF]); bytes.set(u, 3); suffix = '_utf8bom'; }
+      else { bytes = u; suffix = '_utf8'; }
+    }
+    var dot = baseName.lastIndexOf('.');
+    var name = dot > 0 ? baseName.slice(0, dot) + suffix + baseName.slice(dot) : baseName + suffix + '.csv';
+    TB.download(new Blob([bytes], { type: 'text/csv' }), name);
+    $('cm-warn').innerHTML = warn || '<p class="ok">変換しました: ' + TB.esc(name) + '</p>';
+  }
+
+  $('cm-file').addEventListener('change', function () { if (this.files[0]) load(this.files[0]); });
+  var drop = $('cm-drop');
+  ['dragenter', 'dragover'].forEach(function (ev) { drop.addEventListener(ev, function (e) { e.preventDefault(); drop.classList.add('over'); }); });
+  ['dragleave', 'drop'].forEach(function (ev) { drop.addEventListener(ev, function (e) { e.preventDefault(); drop.classList.remove('over'); }); });
+  drop.addEventListener('drop', function (e) { if (e.dataTransfer.files[0]) load(e.dataTransfer.files[0]); });
+  $('cm-go').addEventListener('click', function () { if (current) convert(current.text, current.name); });
+  $('cm-textgo').addEventListener('click', function () { convert($('cm-text').value, 'text.csv'); });
+})();
+</script>
+
+<h2>CSVが文字化けする原因</h2>
+<p>Excel（Windows版）は、BOM（ファイル先頭の目印）の付いていない CSV を <strong>Shift_JIS</strong> として読み込みます。そのため、Webサービスや Googleスプレッドシート、Mac で作られた <strong>UTF-8</strong> の CSV をダブルクリックで開くと「縺ゅ≧」のような文字化けが起こります。逆に、Shift_JIS の CSV を Web システムに取り込むと「�」が並ぶことがあります。</p>
+
+<h2>どの文字コードを選べばいい？</h2>
+<table>
+  <tr><th>用途</th><th>おすすめ</th></tr>
+  <tr><td>Excel でダブルクリックして開きたい</td><td>UTF-8（BOM付き）</td></tr>
+  <tr><td>会計ソフト・銀行・古い基幹システムに取り込む</td><td>Shift_JIS（取り込み先の仕様を確認）</td></tr>
+  <tr><td>Webサービス・プログラムで読み込む</td><td>UTF-8（BOMなし）</td></tr>
+</table>
+
+<h2>よくある質問</h2>
+<details><summary>ファイルはサーバーにアップロードされますか？</summary><p>されません。読み込み・変換・保存はすべてお使いのブラウザ内で行われます。顧客名簿や売上データなど、社外に出せない CSV も安心して変換できます。</p></details>
+<details><summary>Shift_JIS に変換すると「？」になる文字があります。</summary><p>絵文字や「𠮷（つちよし）」などの一部の漢字は Shift_JIS（CP932）に存在しないため、変換できません。取り込み先が UTF-8 に対応していればそちらを選び、対応していなければ別の文字に置き換えてください。機種依存文字の洗い出しには<a href="../izon-moji/">機種依存文字チェッカー</a>が便利です。</p></details>
+<details><summary>文字コードの自動判定が外れることはありますか？</summary><p>UTF-8 として正しく読めるかを先に確認し、読めなければ Shift_JIS と判定します。ごく短いファイルなどでは誤判定がありえるため、プレビューで文字化けしていないか確認してから変換してください。</p></details>
+<details><summary>大きなファイルでも使えますか？</summary><p>数十MB程度までなら、一般的なパソコンで数秒以内に変換できます。</p></details>
+
+<div class="cta"><b>オフライン版（全14ツール・1ファイル）</b><br>
+社内ネットワークの外に出られないPCや、外部サイトの利用が制限された職場でも使えるよう、全ツールを1つのHTMLファイルにまとめました。ダブルクリックで開くだけ、インストール不要です。
+<a href="../offline/">詳しく見る →</a></div>
+<h2>関連ツール</h2>
+<div class="grid"><a class="tile" href="../izon-moji/"><b>機種依存文字チェッカー</b><small>①・㈱・㍉・髙・﨑・絵文字など、システムやメールで化けやすい文字を色付きで検出し、ワンクリックで安全な文字に置換。</small></a><a class="tile" href="../json-format/"><b>JSON 整形・圧縮・検証</b><small>JSONを見やすく整形・1行に圧縮。構文エラーは行と列を表示。キーのソートや日本語のエスケープ解除にも対応。</small></a><a class="tile" href="../zenkaku-hankaku/"><b>全角・半角 変換ツール</b><small>英数字・カタカナ・記号・スペースを、種類ごとに選んで全角⇔半角に一括変換。住所や名簿の表記ゆれ統一に。</small></a></div>
+</main>
+<footer class="site"><div class="in">
+<p>🔒 このサイトのツールは、入力したデータをサーバーへ送信しません。変換・計算はすべてお使いのブラウザ内で行われます。</p>
+<p><a href="../about/">運営者情報</a>　<a href="../privacy/">プライバシーポリシー</a>　<a href="../tokushoho/">特定商取引法に基づく表記</a>　<a href="../offline/">オフライン版</a></p>
+<p>© 2026 ツールばこ — AI（Claude）が企画・開発・運営しています。</p>
+</div></footer>
+</body></html>

@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>日数計算（日付の差・○日後・○日前）| 何日間・何週間・何か月か | ツールばこ</title>
+<meta name="description" content="2つの日付の間が何日あるかを計算する無料ツール。初日を含む・含まない数え方の切り替え、週数・月数・年数での表示に対応。基準日から○日後・○日前の日付と曜日も計算できます。支払期限、契約期間、日割り計算、記念日の確認に。">
+<link rel="canonical" href="https://yyy8m.github.io/nissu-keisan/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="日数計算（日付の差・○日後・○日前）| 何日間・何週間・何か月か | ツールばこ">
+<meta property="og:description" content="2つの日付の間が何日あるかを計算する無料ツール。初日を含む・含まない数え方の切り替え、週数・月数・年数での表示に対応。基準日から○日後・○日前の日付と曜日も計算できます。支払期限、契約期間、日割り計算、記念日の確認に。">
+<meta property="og:url" content="https://yyy8m.github.io/nissu-keisan/">
+<meta property="og:site_name" content="ツールばこ">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/style.css?v=1.0">
+
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebApplication", "name": "日数計算（日付の差・○日後の日付）", "description": "2つの日付の間が何日あるかを計算する無料ツール。初日を含む・含まない数え方の切り替え、週数・月数・年数での表示に対応。基準日から○日後・○日前の日付と曜日も計算できます。支払期限、契約期間、日割り計算、記念日の確認に。", "url": "https://yyy8m.github.io/nissu-keisan/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (Web browser)", "inLanguage": "ja", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "JPY"}}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "ツールばこ", "item": "https://yyy8m.github.io/"}, {"@type": "ListItem", "position": 2, "name": "日数計算（日付の差・○日後の日付）", "item": "https://yyy8m.github.io/nissu-keisan/"}]}]}</script>
+</head>
+<body>
+<header class="site"><div class="in">
+<a class="logo" href="../">🧰 ツール<span>ばこ</span></a>
+<nav><a href="../#jimu">事務・経理</a><a href="../#moji">文字・テキスト</a><a href="../#tetsuzuki">手続き</a><a href="../#data">データ</a><a href="../offline/">オフライン版</a></nav>
+</div></header>
+
+<main>
+<div class="crumb"><a href="../">ツールばこ</a> › 手続き・書類</div>
+<h1>日数計算（日付の差・○日後の日付）</h1>
+<p class="lead">2つの日付の間の日数（初日を含む・含まない）、○日後・○日前の日付を計算。期限・賞味期限・日割り・記念日の確認に。<br><span class="badge">無料</span><span class="badge">登録不要</span><span class="badge">データ送信なし</span></p>
+<script src="../assets/common.js?v=1.0"></script>
+<div class="card">
+  <h3 style="margin-top:0">2つの日付の間の日数</h3>
+  <div class="row">
+    <div><label for="ns-a">開始日</label><input type="date" id="ns-a"></div>
+    <div><label for="ns-b">終了日</label><input type="date" id="ns-b"></div>
+  </div>
+  <label class="inline"><input type="checkbox" id="ns-incl"> 初日も含めて数える（例：1日〜3日を「3日間」とする）</label>
+  <div class="result" id="ns-out1" style="margin-top:10px"></div>
+</div>
+<div class="card">
+  <h3 style="margin-top:0">○日後・○日前の日付</h3>
+  <div class="row">
+    <div><label for="ns-base">基準日</label><input type="date" id="ns-base"></div>
+    <div><label for="ns-n">日数（マイナスで「前」）</label><input type="number" id="ns-n" value="30"></div>
+  </div>
+  <div class="result big" id="ns-out2" style="margin-top:10px"></div>
+</div>
+<script>
+(function () {
+  var $ = TB.$, WD = ['日', '月', '火', '水', '木', '金', '土'];
+  function pad(n) { return String(n).padStart(2, '0'); }
+  function parse(s) { var p = s.split('-').map(Number); return Date.UTC(p[0], p[1] - 1, p[2]); }
+  function fmt(t) { var d = new Date(t); return d.getUTCFullYear() + '年' + (d.getUTCMonth() + 1) + '月' + d.getUTCDate() + '日（' + WD[d.getUTCDay()] + '）'; }
+  function ymdiff(a, b) {
+    var x = new Date(a), y = new Date(b);
+    var m = (y.getUTCFullYear() - x.getUTCFullYear()) * 12 + (y.getUTCMonth() - x.getUTCMonth());
+    if (y.getUTCDate() < x.getUTCDate()) m--;
+    var last = new Date(Date.UTC(x.getUTCFullYear(), x.getUTCMonth() + m + 1, 0)).getUTCDate();
+    var anchor = Date.UTC(x.getUTCFullYear(), x.getUTCMonth() + m, Math.min(x.getUTCDate(), last));
+    return { y: Math.floor(m / 12), m: m % 12, d: Math.round((b - anchor) / 86400000) };
+  }
+  function run1() {
+    if (!$('ns-a').value || !$('ns-b').value) return;
+    var a = parse($('ns-a').value), b = parse($('ns-b').value), sign = '';
+    if (b < a) { var t = a; a = b; b = t; sign = '（開始日と終了日を入れ替えて計算）'; }
+    var days = Math.round((b - a) / 86400000) + ($('ns-incl').checked ? 1 : 0);
+    var ymd = ymdiff(a, b);
+    $('ns-out1').innerHTML = '<span class="big">' + days.toLocaleString() + ' 日' + ($('ns-incl').checked ? '間' : '') + '</span>' + sign + '<br>' +
+      '＝ ' + Math.floor(days / 7) + ' 週 ' + (days % 7) + ' 日 ／ ' + (ymd.y ? ymd.y + ' 年 ' : '') + ymd.m + ' か月 ' + ymd.d + ' 日（初日を含まない場合）';
+  }
+  function run2() {
+    if (!$('ns-base').value) return;
+    var n = parseInt($('ns-n').value, 10) || 0;
+    $('ns-out2').textContent = fmt(parse($('ns-base').value) + n * 86400000);
+  }
+  var d = new Date(), today = d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+  $('ns-a').value = today; $('ns-base').value = today;
+  $('ns-b').value = d.getFullYear() + '-12-31';
+  ['ns-a', 'ns-b', 'ns-incl'].forEach(function (id) { $(id).addEventListener('input', run1); $(id).addEventListener('change', run1); });
+  ['ns-base', 'ns-n'].forEach(function (id) { $(id).addEventListener('input', run2); });
+  run1(); run2();
+})();
+</script>
+
+<h2>「初日を含む」「含まない」の違い</h2>
+<p>1月1日から1月3日までを数える場合、日付の差は <strong>2日</strong>ですが、宿泊や休暇のように「1日・2日・3日の3日間」と数えるときは初日を含めて <strong>3日間</strong>になります。</p>
+<table>
+  <tr><th>場面</th><th>数え方</th></tr>
+  <tr><td>「○日後」「○日以内」、年齢・経過日数</td><td>初日を含まない（日付の差）</td></tr>
+  <tr><td>旅行・休暇・イベントの「○日間」、日割り計算の日数</td><td>初日を含む</td></tr>
+  <tr><td>法律上の期間（民法）</td><td>原則として初日を算入しない（午前0時から始まる場合を除く）</td></tr>
+</table>
+<h2>よくある質問</h2>
+<details><summary>うるう年は考慮されますか？</summary><p>はい。2月29日を含めて正確に計算します。</p></details>
+<details><summary>土日祝日を除いた日数を知りたい</summary><p><a href="../eigyobi/">営業日計算</a>をご利用ください。祝日・振替休日・年末年始を除いて数えられます。</p></details>
+
+<div class="cta"><b>オフライン版（全14ツール・1ファイル）</b><br>
+社内ネットワークの外に出られないPCや、外部サイトの利用が制限された職場でも使えるよう、全ツールを1つのHTMLファイルにまとめました。ダブルクリックで開くだけ、インストール不要です。
+<a href="../offline/">詳しく見る →</a></div>
+<h2>関連ツール</h2>
+<div class="grid"><a class="tile" href="../eigyobi/"><b>営業日計算（日本の祝日対応）</b><small>「5営業日後は何日？」「この期間の営業日数は？」を祝日・振替休日・年末年始込みで計算。祝日一覧も表示。</small></a><a class="tile" href="../wareki/"><b>和暦 ⇔ 西暦 変換・年齢早見表</b><small>令和・平成・昭和などの和暦と西暦を日付単位で相互変換。生年ごとの年齢・干支・学年がわかる早見表付き。</small></a><a class="tile" href="../shohizei/"><b>消費税計算（税込⇔税抜・インボイス制度対応）</b><small>税込⇔税抜の変換と、10%・8%が混在する請求書の税率ごとの消費税額を、インボイス制度の端数処理ルールで計算。</small></a></div>
+</main>
+<footer class="site"><div class="in">
+<p>🔒 このサイトのツールは、入力したデータをサーバーへ送信しません。変換・計算はすべてお使いのブラウザ内で行われます。</p>
+<p><a href="../about/">運営者情報</a>　<a href="../privacy/">プライバシーポリシー</a>　<a href="../tokushoho/">特定商取引法に基づく表記</a>　<a href="../offline/">オフライン版</a></p>
+<p>© 2026 ツールばこ — AI（Claude）が企画・開発・運営しています。</p>
+</div></footer>
+</body></html>

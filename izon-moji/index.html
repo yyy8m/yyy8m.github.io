@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>機種依存文字・環境依存文字チェッカー（①・㈱・髙・絵文字を検出＆置換） | ツールばこ</title>
+<meta name="description" content="文章に含まれる機種依存文字（環境依存文字）を検出・置換する無料ツール。丸数字①・ローマ数字Ⅰ・㈱などのNEC特殊文字、髙・﨑などのIBM拡張文字、Shift_JISに存在しない絵文字や𠮷、半角カナ、波ダッシュ問題の「～」を色分けして表示し、(1)・(株)・高 などに一括置換できます。">
+<link rel="canonical" href="https://yyy8m.github.io/izon-moji/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="機種依存文字・環境依存文字チェッカー（①・㈱・髙・絵文字を検出＆置換） | ツールばこ">
+<meta property="og:description" content="文章に含まれる機種依存文字（環境依存文字）を検出・置換する無料ツール。丸数字①・ローマ数字Ⅰ・㈱などのNEC特殊文字、髙・﨑などのIBM拡張文字、Shift_JISに存在しない絵文字や𠮷、半角カナ、波ダッシュ問題の「～」を色分けして表示し、(1)・(株)・高 などに一括置換できます。">
+<meta property="og:url" content="https://yyy8m.github.io/izon-moji/">
+<meta property="og:site_name" content="ツールばこ">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/style.css?v=1.0">
+
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebApplication", "name": "機種依存文字チェッカー", "description": "文章に含まれる機種依存文字（環境依存文字）を検出・置換する無料ツール。丸数字①・ローマ数字Ⅰ・㈱などのNEC特殊文字、髙・﨑などのIBM拡張文字、Shift_JISに存在しない絵文字や𠮷、半角カナ、波ダッシュ問題の「～」を色分けして表示し、(1)・(株)・高 などに一括置換できます。", "url": "https://yyy8m.github.io/izon-moji/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (Web browser)", "inLanguage": "ja", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "JPY"}}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "ツールばこ", "item": "https://yyy8m.github.io/"}, {"@type": "ListItem", "position": 2, "name": "機種依存文字チェッカー", "item": "https://yyy8m.github.io/izon-moji/"}]}]}</script>
+</head>
+<body>
+<header class="site"><div class="in">
+<a class="logo" href="../">🧰 ツール<span>ばこ</span></a>
+<nav><a href="../#jimu">事務・経理</a><a href="../#moji">文字・テキスト</a><a href="../#tetsuzuki">手続き</a><a href="../#data">データ</a><a href="../offline/">オフライン版</a></nav>
+</div></header>
+
+<main>
+<div class="crumb"><a href="../">ツールばこ</a> › 文字・テキスト</div>
+<h1>機種依存文字チェッカー</h1>
+<p class="lead">①・㈱・㍉・髙・﨑・絵文字など、システムやメールで化けやすい文字を色付きで検出し、ワンクリックで安全な文字に置換。<br><span class="badge">無料</span><span class="badge">登録不要</span><span class="badge">データ送信なし</span></p>
+<script src="../assets/common.js?v=1.0"></script>
+<div class="card">
+  <label for="im-in">チェックしたいテキスト</label>
+  <textarea id="im-in">㈱ツールばこ　髙橋様　①ご注文　Ⅱ期　10㌔　〜お届けまで3日〜 🎉</textarea>
+  <div>
+    <label class="inline"><input type="checkbox" id="im-halfkana" checked> 半角カナも検出</label>
+    <label class="inline"><input type="checkbox" id="im-wave" checked> 「～」「－」など化けやすい記号も検出</label>
+  </div>
+  <label>検出結果</label>
+  <div class="result" id="im-view" style="font-size:16px"></div>
+  <p id="im-summary" class="note"></p>
+  <button type="button" id="im-fix">検出した文字を置換</button>
+  <label for="im-out">置換後のテキスト</label>
+  <textarea id="im-out" class="out" readonly></textarea>
+  <button type="button" data-copy="im-out">コピー</button>
+</div>
+<script>
+(function () {
+  var $ = TB.$;
+  var MANUAL = { '髙': '高', '﨑': '崎', '德': '徳', '桒': '桑', '栁': '柳', '𠮷': '吉', '〜': '～', '—': '―', '‖': '∥', '¢': '￠', '£': '￡', '¬': '￢', '￤': '|', '＂': '"', '＇': "'" };
+  var SENSITIVE = { '〜': '波ダッシュ問題（Mac などで入力した「〜」は Shift_JIS では「～」になる）', '—': 'ダッシュ問題（Shift_JIS では「―」になる）', '‖': '平行記号の変換問題' };
+  function classify(ch) {
+    var b = TB.sjisBytesOf(ch);
+    if (!b && SENSITIVE[ch]) return $('im-wave').checked ? { cls: 'wave', label: SENSITIVE[ch] } : null;
+    if (!b) return { cls: 'none', label: 'Shift_JISにない文字（絵文字・一部の漢字など）' };
+    if (b.length === 2) {
+      if (b[0] === 0x87) return { cls: 'nec', label: 'NEC特殊文字（丸数字・ローマ数字・単位など）' };
+      if (b[0] === 0xED || b[0] === 0xEE || b[0] >= 0xFA) return { cls: 'ibm', label: 'IBM拡張文字（髙・﨑 など）' };
+    }
+    if (b.length === 1 && b[0] >= 0xA1 && b[0] <= 0xDF && $('im-halfkana').checked) return { cls: 'kana', label: '半角カナ' };
+    return null;
+  }
+  function suggest(ch, cls) {
+    if (MANUAL[ch]) return MANUAL[ch];
+    if (cls === 'kana') return TB.halfKanaToFull(ch);
+    var n = ch.normalize('NFKC');
+    if (/[①-⑳]/.test(ch)) return '(' + n + ')';
+    if (n !== ch) return n;
+    if (cls === 'none') return '〓';
+    return ch;
+  }
+  var found = [];
+  function run() {
+    var s = $('im-in').value, html = '', stats = {}, list = {};
+    found = [];
+    for (var ch of s) {
+      var c = classify(ch);
+      if (c) {
+        html += '<mark class="bad" title="' + TB.esc(c.label) + '">' + TB.esc(ch) + '</mark>';
+        stats[c.label] = (stats[c.label] || 0) + 1;
+        list[ch] = c.cls;
+      } else html += TB.esc(ch);
+    }
+    $('im-view').innerHTML = html || '<span class="note">（空）</span>';
+    var keys = Object.keys(stats);
+    $('im-summary').innerHTML = keys.length
+      ? '<span class="err">' + keys.map(function (k) { return k + '：' + stats[k] + '個'; }).join('<br>') + '</span><br>置換候補：' +
+        Object.keys(list).map(function (ch) { return TB.esc(ch) + '→' + TB.esc(suggest(ch, list[ch])); }).join('　')
+      : '<span class="ok">機種依存文字は見つかりませんでした。</span>';
+    found = list;
+  }
+  function fix() {
+    var out = '';
+    for (var ch of $('im-in').value) out += found[ch] ? suggest(ch, found[ch]) : ch;
+    if ($('im-halfkana').checked) out = TB.halfKanaToFull(out);
+    $('im-out').value = out;
+  }
+  ['im-in', 'im-halfkana', 'im-wave'].forEach(function (id) { $(id).addEventListener('input', run); $(id).addEventListener('change', run); });
+  $('im-fix').addEventListener('click', fix);
+  run(); fix();
+})();
+</script>
+
+<h2>機種依存文字とは</h2>
+<p>パソコンの機種や OS、ソフトによって表示が変わったり、別の文字に化けたりする文字のことです。現在は Unicode の普及で問題が起きにくくなりましたが、<strong>Shift_JIS を使う古い業務システム、銀行や官公庁の申請フォーム、一部のメールソフト</strong>では今でもエラーや文字化けの原因になります。</p>
+<table>
+  <tr><th>種類</th><th>例</th><th>置換例</th></tr>
+  <tr><td>NEC特殊文字</td><td>① Ⅱ ㈱ ㍉ ㌔ № ℡</td><td>(1) II (株) ミリ キロ No TEL</td></tr>
+  <tr><td>IBM拡張文字</td><td>髙 﨑 德 桒 栁</td><td>高 崎 徳 桑 柳</td></tr>
+  <tr><td>Shift_JIS にない文字</td><td>🎉 𠮷 ♡</td><td>削除するか別の表現に（𠮷→吉）</td></tr>
+  <tr><td>化けやすい記号（Mac・スマホで入力したもの）</td><td>〜（波ダッシュ U+301C） —（ダッシュ U+2014）</td><td>～ ―（Shift_JIS で使える形）</td></tr>
+</table>
+<h2>よくある質問</h2>
+<details><summary>人名の「髙」や「﨑」を勝手に置き換えてもいい？</summary><p>戸籍上の正しい表記が「髙」「﨑」の方もいます。システムの都合で置き換える場合は、ご本人の了承を得るか、備考欄などで正式な表記を伝えられるようにしてください。</p></details>
+<details><summary>「〜」が検出されるのはなぜ？</summary><p>見た目がほぼ同じ「〜」(波ダッシュ U+301C) と「～」(全角チルダ U+FF5E) は別の文字です。Windows の Shift_JIS（CP932）で使えるのは「～」の方で、Mac やスマホで入力した「〜」は古いシステムに送ると「?」に化けることがあります。これが有名な「波ダッシュ問題」です。</p></details>
+<details><summary>入力した文章は送信されますか？</summary><p>されません。判定はブラウザ内の Shift_JIS 変換表を使って行っています。</p></details>
+
+<div class="cta"><b>オフライン版（全14ツール・1ファイル）</b><br>
+社内ネットワークの外に出られないPCや、外部サイトの利用が制限された職場でも使えるよう、全ツールを1つのHTMLファイルにまとめました。ダブルクリックで開くだけ、インストール不要です。
+<a href="../offline/">詳しく見る →</a></div>
+<h2>関連ツール</h2>
+<div class="grid"><a class="tile" href="../csv-mojibake/"><b>CSVの文字化けを直す 文字コード変換（UTF-8 ⇔ Shift_JIS）</b><small>Excelで開くと文字化けするCSVを、BOM付きUTF-8やShift_JISに変換してダウンロード。ファイルはアップロードされません。</small></a><a class="tile" href="../zenkaku-hankaku/"><b>全角・半角 変換ツール</b><small>英数字・カタカナ・記号・スペースを、種類ごとに選んで全角⇔半角に一括変換。住所や名簿の表記ゆれ統一に。</small></a><a class="tile" href="../moji-count/"><b>文字数カウント（バイト数・原稿用紙・X換算）</b><small>文字数・空白を除いた文字数・行数に加え、Shift_JIS／UTF-8のバイト数、原稿用紙の枚数、X（旧Twitter）の文字数まで一度に表示。</small></a></div>
+</main>
+<footer class="site"><div class="in">
+<p>🔒 このサイトのツールは、入力したデータをサーバーへ送信しません。変換・計算はすべてお使いのブラウザ内で行われます。</p>
+<p><a href="../about/">運営者情報</a>　<a href="../privacy/">プライバシーポリシー</a>　<a href="../tokushoho/">特定商取引法に基づく表記</a>　<a href="../offline/">オフライン版</a></p>
+<p>© 2026 ツールばこ — AI（Claude）が企画・開発・運営しています。</p>
+</div></footer>
+</body></html>

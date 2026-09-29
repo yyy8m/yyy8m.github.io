@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>源泉徴収税額の計算（報酬・料金）| 10.21%・請求書の差引支払額・手取りから逆算 | ツールばこ</title>
+<meta name="description" content="報酬・料金（原稿料、デザイン料、講演料など）の源泉徴収税額を計算する無料ツール。100万円以下は10.21%、超える部分は20.42%で計算し、消費税を区分した請求書の差引支払額（振込額）を表示します。希望の手取り額から報酬額を逆算することもできます。">
+<link rel="canonical" href="https://yyy8m.github.io/gensen-choshu/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="源泉徴収税額の計算（報酬・料金）| 10.21%・請求書の差引支払額・手取りから逆算 | ツールばこ">
+<meta property="og:description" content="報酬・料金（原稿料、デザイン料、講演料など）の源泉徴収税額を計算する無料ツール。100万円以下は10.21%、超える部分は20.42%で計算し、消費税を区分した請求書の差引支払額（振込額）を表示します。希望の手取り額から報酬額を逆算することもできます。">
+<meta property="og:url" content="https://yyy8m.github.io/gensen-choshu/">
+<meta property="og:site_name" content="ツールばこ">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/style.css?v=1.0">
+
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebApplication", "name": "源泉徴収税額の計算（報酬・料金）", "description": "報酬・料金（原稿料、デザイン料、講演料など）の源泉徴収税額を計算する無料ツール。100万円以下は10.21%、超える部分は20.42%で計算し、消費税を区分した請求書の差引支払額（振込額）を表示します。希望の手取り額から報酬額を逆算することもできます。", "url": "https://yyy8m.github.io/gensen-choshu/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (Web browser)", "inLanguage": "ja", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "JPY"}}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "ツールばこ", "item": "https://yyy8m.github.io/"}, {"@type": "ListItem", "position": 2, "name": "源泉徴収税額の計算（報酬・料金）", "item": "https://yyy8m.github.io/gensen-choshu/"}]}]}</script>
+</head>
+<body>
+<header class="site"><div class="in">
+<a class="logo" href="../">🧰 ツール<span>ばこ</span></a>
+<nav><a href="../#jimu">事務・経理</a><a href="../#moji">文字・テキスト</a><a href="../#tetsuzuki">手続き</a><a href="../#data">データ</a><a href="../offline/">オフライン版</a></nav>
+</div></header>
+
+<main>
+<div class="crumb"><a href="../">ツールばこ</a> › 事務・経理</div>
+<h1>源泉徴収税額の計算（報酬・料金）</h1>
+<p class="lead">フリーランスへの原稿料・デザイン料などの源泉徴収税額（10.21%／100万円超は20.42%）と、請求書の差引支払額を計算。手取り額からの逆算にも対応。<br><span class="badge">無料</span><span class="badge">登録不要</span><span class="badge">データ送信なし</span></p>
+<script src="../assets/common.js?v=1.0"></script>
+<div class="card">
+  <h3 style="margin-top:0">報酬額から計算（請求書の作成）</h3>
+  <div class="row">
+    <div><label for="gs-amt">報酬額（円）</label><input type="number" id="gs-amt" value="100000" min="0"></div>
+    <div><label for="gs-basis">入力した報酬額は</label>
+      <select id="gs-basis"><option value="ex">税抜（消費税を別に記載）</option><option value="in">税込（消費税を区分しない）</option></select></div>
+    <div><label for="gs-tax">消費税</label>
+      <select id="gs-tax"><option value="10">10%を上乗せ</option><option value="0">なし（免税・対象外）</option></select></div>
+  </div>
+  <div class="result" id="gs-out" style="margin-top:12px"></div>
+  <button type="button" data-copy="gs-out">明細をコピー</button>
+</div>
+<div class="card">
+  <h3 style="margin-top:0">手取り額（振込額）から逆算</h3>
+  <div class="row">
+    <div><label for="gs-net">受け取りたい金額（円）</label><input type="number" id="gs-net" value="100000" min="0"></div>
+  </div>
+  <div class="result" id="gs-out2" style="margin-top:12px"></div>
+  <p class="note">消費税は上の設定（10%上乗せ／なし）を使い、報酬額は税抜・消費税区分ありとして逆算します。</p>
+</div>
+<script>
+(function () {
+  var $ = TB.$;
+  function yen(n) { return n.toLocaleString('ja-JP'); }
+  function withholding(base) {
+    if (base <= 1000000) return Math.floor(base * 1021 / 10000);
+    return Math.floor((base - 1000000) * 2042 / 10000) + 102100;
+  }
+  function calc(amount, basis, rate) {
+    var fee, tax, target;
+    if (basis === 'ex') { fee = amount; tax = Math.floor(fee * rate / 100); target = fee; }
+    else { fee = amount; tax = 0; target = amount; }
+    var w = withholding(target);
+    return { fee: fee, tax: tax, total: fee + tax, w: w, pay: fee + tax - w, target: target };
+  }
+  function run() {
+    var a = Math.max(0, Math.floor(+$('gs-amt').value || 0)), basis = $('gs-basis').value, rate = +$('gs-tax').value;
+    var r = calc(a, basis, rate), lines = [];
+    if (basis === 'ex') {
+      lines.push('報酬（税抜）　　　' + yen(r.fee) + ' 円');
+      if (rate) lines.push('消費税（' + rate + '%）　　' + yen(r.tax) + ' 円');
+      lines.push('合計　　　　　　　' + yen(r.total) + ' 円');
+    } else {
+      lines.push('報酬（税込）　　　' + yen(r.fee) + ' 円');
+    }
+    lines.push('源泉徴収税額　　 −' + yen(r.w) + ' 円（対象 ' + yen(r.target) + ' 円 × ' + (r.target > 1000000 ? '100万円超の部分 20.42%' : '10.21%') + '）');
+    lines.push('――――――――――');
+    lines.push('差引支払額（振込額）' + yen(r.pay) + ' 円');
+    $('gs-out').textContent = lines.join('\n');
+    var net = Math.max(0, Math.floor(+$('gs-net').value || 0));
+    var ratio = 1 + rate / 100 - 0.1021, x = Math.floor(net / ratio) - 3, found = null;
+    for (var i = 0; i < 200000 && x < net * 2 + 10; i++, x++) {
+      if (x < 0) continue;
+      var c = calc(x, 'ex', rate);
+      if (c.pay >= net) { found = c; break; }
+    }
+    $('gs-out2').textContent = found ? '報酬（税抜）' + yen(found.fee) + ' 円で請求すると、振込額は ' + yen(found.pay) + ' 円になります。\n（消費税 ' + yen(found.tax) + ' 円、源泉徴収税額 ' + yen(found.w) + ' 円）' : '';
+  }
+  ['gs-amt', 'gs-basis', 'gs-tax', 'gs-net'].forEach(function (id) { $(id).addEventListener('input', run); $(id).addEventListener('change', run); });
+  run();
+})();
+</script>
+
+<h2>源泉徴収税額の計算式</h2>
+<table>
+  <tr><th>支払金額（1回あたり）</th><th>源泉徴収税額</th></tr>
+  <tr><td>100万円以下</td><td>支払金額 × 10.21%</td></tr>
+  <tr><td>100万円超</td><td>（支払金額 − 100万円）× 20.42% ＋ 102,100円</td></tr>
+</table>
+<p>税率には、所得税（10%・20%）に復興特別所得税（所得税額の2.1%）を加えた 10.21%・20.42% を使います。1円未満の端数は切り捨てます。</p>
+
+<h2>消費税は含める？含めない？</h2>
+<p>請求書などで報酬の金額と消費税の額が<strong>明確に区分されている場合は、税抜の報酬額だけ</strong>を源泉徴収の対象にできます。区分されていない場合は、消費税を含めた金額が対象になります。「入力した報酬額は」で「税込（消費税を区分しない）」を選ぶと、この場合の計算になります。</p>
+
+<h2>源泉徴収が必要な報酬の例</h2>
+<ul>
+  <li>原稿料、デザイン料、イラスト料、翻訳料、講演料、写真の撮影料</li>
+  <li>弁護士・税理士・社会保険労務士などへの報酬</li>
+  <li>プロスポーツ選手・モデル・芸能人への報酬</li>
+</ul>
+<p>源泉徴収をするのは、報酬を<strong>支払う側が法人や給与を支払っている個人事業主</strong>の場合です。個人に支払う報酬が対象で、法人への支払いは原則として対象外です（馬主への賞金など一部を除く）。</p>
+
+<h2>よくある質問</h2>
+<details><summary>いつまで 10.21% なの？</summary><p>復興特別所得税は2037年（令和19年）12月31日までの支払いに適用されます。2038年以降は制度改正がなければ 10% になります。</p></details>
+<details><summary>源泉徴収した税金はいつ納める？</summary><p>原則として、支払った月の翌月10日までに税務署へ納付します（納期の特例の承認を受けていれば半年ごと）。</p></details>
+<details><summary>入力した金額は送信されますか？</summary><p>されません。計算はブラウザ内だけで行われます。</p></details>
+<p class="note">※ 計算結果は参考値です。個別の判断は税理士や所轄の税務署にご確認ください。</p>
+
+<div class="cta"><b>オフライン版（全14ツール・1ファイル）</b><br>
+社内ネットワークの外に出られないPCや、外部サイトの利用が制限された職場でも使えるよう、全ツールを1つのHTMLファイルにまとめました。ダブルクリックで開くだけ、インストール不要です。
+<a href="../offline/">詳しく見る →</a></div>
+<h2>関連ツール</h2>
+<div class="grid"><a class="tile" href="../shohizei/"><b>消費税計算（税込⇔税抜・インボイス制度対応）</b><small>税込⇔税抜の変換と、10%・8%が混在する請求書の税率ごとの消費税額を、インボイス制度の端数処理ルールで計算。</small></a><a class="tile" href="../zengin-kana/"><b>振込用 半角カナ変換（口座名義・全銀協規定文字）</b><small>振込先の口座名義を、銀行で使える半角カナに一発変換。株式会社→ｶ) などの法人略語、小さい文字・長音の置換、使えない文字の検出まで。</small></a><a class="tile" href="../eigyobi/"><b>営業日計算（日本の祝日対応）</b><small>「5営業日後は何日？」「この期間の営業日数は？」を祝日・振替休日・年末年始込みで計算。祝日一覧も表示。</small></a></div>
+</main>
+<footer class="site"><div class="in">
+<p>🔒 このサイトのツールは、入力したデータをサーバーへ送信しません。変換・計算はすべてお使いのブラウザ内で行われます。</p>
+<p><a href="../about/">運営者情報</a>　<a href="../privacy/">プライバシーポリシー</a>　<a href="../tokushoho/">特定商取引法に基づく表記</a>　<a href="../offline/">オフライン版</a></p>
+<p>© 2026 ツールばこ — AI（Claude）が企画・開発・運営しています。</p>
+</div></footer>
+</body></html>

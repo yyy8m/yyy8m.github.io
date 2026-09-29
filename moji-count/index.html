@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>文字数カウント・バイト数計算（Shift_JIS / UTF-8・原稿用紙換算） | ツールばこ</title>
+<meta name="description" content="文字数をリアルタイムでカウントする無料ツール。空白・改行を除いた文字数、行数、全角・半角の内訳、Shift_JISとUTF-8のバイト数、400字詰め原稿用紙の枚数、X（旧Twitter）の重み付き文字数を同時に表示します。入力はブラウザ内で処理され送信されません。">
+<link rel="canonical" href="https://yyy8m.github.io/moji-count/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="文字数カウント・バイト数計算（Shift_JIS / UTF-8・原稿用紙換算） | ツールばこ">
+<meta property="og:description" content="文字数をリアルタイムでカウントする無料ツール。空白・改行を除いた文字数、行数、全角・半角の内訳、Shift_JISとUTF-8のバイト数、400字詰め原稿用紙の枚数、X（旧Twitter）の重み付き文字数を同時に表示します。入力はブラウザ内で処理され送信されません。">
+<meta property="og:url" content="https://yyy8m.github.io/moji-count/">
+<meta property="og:site_name" content="ツールばこ">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/style.css?v=1.0">
+
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebApplication", "name": "文字数カウント（バイト数・原稿用紙・X換算）", "description": "文字数をリアルタイムでカウントする無料ツール。空白・改行を除いた文字数、行数、全角・半角の内訳、Shift_JISとUTF-8のバイト数、400字詰め原稿用紙の枚数、X（旧Twitter）の重み付き文字数を同時に表示します。入力はブラウザ内で処理され送信されません。", "url": "https://yyy8m.github.io/moji-count/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (Web browser)", "inLanguage": "ja", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "JPY"}}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "ツールばこ", "item": "https://yyy8m.github.io/"}, {"@type": "ListItem", "position": 2, "name": "文字数カウント（バイト数・原稿用紙・X換算）", "item": "https://yyy8m.github.io/moji-count/"}]}]}</script>
+</head>
+<body>
+<header class="site"><div class="in">
+<a class="logo" href="../">🧰 ツール<span>ばこ</span></a>
+<nav><a href="../#jimu">事務・経理</a><a href="../#moji">文字・テキスト</a><a href="../#tetsuzuki">手続き</a><a href="../#data">データ</a><a href="../offline/">オフライン版</a></nav>
+</div></header>
+
+<main>
+<div class="crumb"><a href="../">ツールばこ</a> › 文字・テキスト</div>
+<h1>文字数カウント（バイト数・原稿用紙・X換算）</h1>
+<p class="lead">文字数・空白を除いた文字数・行数に加え、Shift_JIS／UTF-8のバイト数、原稿用紙の枚数、X（旧Twitter）の文字数まで一度に表示。<br><span class="badge">無料</span><span class="badge">登録不要</span><span class="badge">データ送信なし</span></p>
+<script src="../assets/common.js?v=1.0"></script>
+<div class="card">
+  <label for="mc-in">テキストを入力・貼り付け</label>
+  <textarea id="mc-in" rows="8" placeholder="ここに文章を入力すると、下に文字数が表示されます"></textarea>
+  <div class="stats" style="margin-top:12px">
+    <div><b id="mc-chars">0</b><span>文字数（改行を除く）</span></div>
+    <div><b id="mc-nospace">0</b><span>空白・改行を除く</span></div>
+    <div><b id="mc-all">0</b><span>改行も含む</span></div>
+    <div><b id="mc-lines">0</b><span>行数</span></div>
+    <div><b id="mc-full">0</b><span>全角文字</span></div>
+    <div><b id="mc-half">0</b><span>半角文字</span></div>
+    <div><b id="mc-sjis">0</b><span>Shift_JIS バイト</span></div>
+    <div><b id="mc-utf8">0</b><span>UTF-8 バイト</span></div>
+    <div><b id="mc-genko">0</b><span>原稿用紙（400字）枚</span></div>
+    <div><b id="mc-x">0</b><span>X換算（上限280）</span></div>
+  </div>
+  <p class="note" id="mc-note"></p>
+  <button type="button" class="sub" id="mc-clear">クリア</button>
+</div>
+<script>
+(function () {
+  var $ = TB.$;
+  var seg = (window.Intl && Intl.Segmenter) ? new Intl.Segmenter('ja', { granularity: 'grapheme' }) : null;
+  function graphemes(s) { return seg ? Array.from(seg.segment(s), function (x) { return x.segment; }) : Array.from(s); }
+  function isHalf(ch) { var c = ch.codePointAt(0); return c <= 0x7E || (c >= 0xFF61 && c <= 0xFF9F); }
+  function xWeight(ch) {
+    var c = ch.codePointAt(0);
+    if ((c >= 0 && c <= 0x10FF) || (c >= 0x2000 && c <= 0x200D) || (c >= 0x2010 && c <= 0x201F) || (c >= 0x2032 && c <= 0x2037)) return 1;
+    return 2;
+  }
+  function genko(text) {
+    var pages = 0, lines = 0;
+    text.split('\n').forEach(function (p) { var n = graphemes(p).length; lines += Math.max(1, Math.ceil(n / 20)); });
+    pages = Math.ceil(lines / 20);
+    return text ? pages : 0;
+  }
+  function run() {
+    var t = $('mc-in').value.replace(/\r\n/g, '\n');
+    var g = graphemes(t);
+    var noNl = g.filter(function (c) { return c !== '\n'; });
+    var noSp = noNl.filter(function (c) { return !/^\s$/.test(c) && c !== '　'; });
+    var half = 0, full = 0;
+    noNl.forEach(function (c) { if (isHalf(c)) half++; else full++; });
+    var sj = TB.encodeSjis(t);
+    $('mc-chars').textContent = noNl.length;
+    $('mc-nospace').textContent = noSp.length;
+    $('mc-all').textContent = g.length;
+    $('mc-lines').textContent = t ? t.split('\n').length : 0;
+    $('mc-full').textContent = full;
+    $('mc-half').textContent = half;
+    $('mc-sjis').textContent = sj.bytes.length - 0;
+    $('mc-utf8').textContent = new TextEncoder().encode(t).length;
+    $('mc-genko').textContent = genko(t);
+    var xw = 0; g.forEach(function (c) { xw += /\p{Extended_Pictographic}/u.test(c) ? 2 : xWeight(c); });
+    $('mc-x').textContent = xw;
+    $('mc-note').textContent = sj.bad.length ? '※ Shift_JISで表せない文字が ' + sj.bad.length + ' 文字あります（バイト数は1文字=1バイトの「?」として計算）。' : '';
+  }
+  $('mc-in').addEventListener('input', run);
+  $('mc-clear').addEventListener('click', function () { $('mc-in').value = ''; run(); });
+  run();
+})();
+</script>
+
+<h2>各項目の数え方</h2>
+<table>
+  <tr><th>項目</th><th>数え方</th></tr>
+  <tr><td>文字数（改行を除く）</td><td>レポートや応募書類の「○○字以内」の確認に使う一般的な文字数です。スペースは含みます。絵文字や「👨‍👩‍👧」のような結合文字も、見た目どおり1文字として数えます。</td></tr>
+  <tr><td>Shift_JIS バイト</td><td>全角2バイト・半角1バイト。古いシステムの入力欄で「全角○文字（半角○文字）以内」と指定されている場合の確認に。</td></tr>
+  <tr><td>UTF-8 バイト</td><td>日本語はおおむね1文字3バイト。データベースやWebフォームのバイト制限の確認に。</td></tr>
+  <tr><td>原稿用紙</td><td>20字×20行の400字詰めとして、段落ごとに改行した場合の枚数を概算します（禁則処理は考慮しません）。</td></tr>
+  <tr><td>X換算</td><td>X（旧Twitter）では日本語などの全角文字を2、英数字を1として数え、合計280まで投稿できます（URLは一律23として数えられますが、このツールでは文字どおりに数えます）。</td></tr>
+</table>
+<h2>よくある質問</h2>
+<details><summary>入力した文章は保存・送信されますか？</summary><p>されません。すべてブラウザ内で計算しています。未発表の原稿や社外秘の文書でも安心して使えます。</p></details>
+<details><summary>Wordの文字数と違うのはなぜ？</summary><p>Wordの「文字数」は空白を含まない数を表示するなど、ソフトによって数え方が異なります。このツールでは「改行を除く」と「空白・改行を除く」の両方を表示しているので、提出先の指定に合う方を使ってください。</p></details>
+
+<div class="cta"><b>オフライン版（全14ツール・1ファイル）</b><br>
+社内ネットワークの外に出られないPCや、外部サイトの利用が制限された職場でも使えるよう、全ツールを1つのHTMLファイルにまとめました。ダブルクリックで開くだけ、インストール不要です。
+<a href="../offline/">詳しく見る →</a></div>
+<h2>関連ツール</h2>
+<div class="grid"><a class="tile" href="../zenkaku-hankaku/"><b>全角・半角 変換ツール</b><small>英数字・カタカナ・記号・スペースを、種類ごとに選んで全角⇔半角に一括変換。住所や名簿の表記ゆれ統一に。</small></a><a class="tile" href="../izon-moji/"><b>機種依存文字チェッカー</b><small>①・㈱・㍉・髙・﨑・絵文字など、システムやメールで化けやすい文字を色付きで検出し、ワンクリックで安全な文字に置換。</small></a><a class="tile" href="../csv-mojibake/"><b>CSVの文字化けを直す 文字コード変換（UTF-8 ⇔ Shift_JIS）</b><small>Excelで開くと文字化けするCSVを、BOM付きUTF-8やShift_JISに変換してダウンロード。ファイルはアップロードされません。</small></a></div>
+</main>
+<footer class="site"><div class="in">
+<p>🔒 このサイトのツールは、入力したデータをサーバーへ送信しません。変換・計算はすべてお使いのブラウザ内で行われます。</p>
+<p><a href="../about/">運営者情報</a>　<a href="../privacy/">プライバシーポリシー</a>　<a href="../tokushoho/">特定商取引法に基づく表記</a>　<a href="../offline/">オフライン版</a></p>
+<p>© 2026 ツールばこ — AI（Claude）が企画・開発・運営しています。</p>
+</div></footer>
+</body></html>

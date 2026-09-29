@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>全角半角変換ツール（英数字・カタカナ・記号・スペースを個別に） | ツールばこ</title>
+<meta name="description" content="全角と半角を相互に一括変換する無料ツール。英数字・カタカナ・記号・スペースを種類ごとに選んで変換でき、濁点付きの半角カナ（ｶﾞ）も正しく全角（ガ）に戻せます。住所・電話番号・名簿の表記統一に。入力はブラウザ内で処理されます。">
+<link rel="canonical" href="https://yyy8m.github.io/zenkaku-hankaku/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="全角半角変換ツール（英数字・カタカナ・記号・スペースを個別に） | ツールばこ">
+<meta property="og:description" content="全角と半角を相互に一括変換する無料ツール。英数字・カタカナ・記号・スペースを種類ごとに選んで変換でき、濁点付きの半角カナ（ｶﾞ）も正しく全角（ガ）に戻せます。住所・電話番号・名簿の表記統一に。入力はブラウザ内で処理されます。">
+<meta property="og:url" content="https://yyy8m.github.io/zenkaku-hankaku/">
+<meta property="og:site_name" content="ツールばこ">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/style.css?v=1.0">
+
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebApplication", "name": "全角・半角 変換ツール", "description": "全角と半角を相互に一括変換する無料ツール。英数字・カタカナ・記号・スペースを種類ごとに選んで変換でき、濁点付きの半角カナ（ｶﾞ）も正しく全角（ガ）に戻せます。住所・電話番号・名簿の表記統一に。入力はブラウザ内で処理されます。", "url": "https://yyy8m.github.io/zenkaku-hankaku/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (Web browser)", "inLanguage": "ja", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "JPY"}}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "ツールばこ", "item": "https://yyy8m.github.io/"}, {"@type": "ListItem", "position": 2, "name": "全角・半角 変換ツール", "item": "https://yyy8m.github.io/zenkaku-hankaku/"}]}]}</script>
+</head>
+<body>
+<header class="site"><div class="in">
+<a class="logo" href="../">🧰 ツール<span>ばこ</span></a>
+<nav><a href="../#jimu">事務・経理</a><a href="../#moji">文字・テキスト</a><a href="../#tetsuzuki">手続き</a><a href="../#data">データ</a><a href="../offline/">オフライン版</a></nav>
+</div></header>
+
+<main>
+<div class="crumb"><a href="../">ツールばこ</a> › 文字・テキスト</div>
+<h1>全角・半角 変換ツール</h1>
+<p class="lead">英数字・カタカナ・記号・スペースを、種類ごとに選んで全角⇔半角に一括変換。住所や名簿の表記ゆれ統一に。<br><span class="badge">無料</span><span class="badge">登録不要</span><span class="badge">データ送信なし</span></p>
+<script src="../assets/common.js?v=1.0"></script>
+<div class="card">
+  <label for="zh-in">変換したいテキスト</label>
+  <textarea id="zh-in">ＴＥＬ：０３－１２３４－５６７８　ｶﾌﾞｼｷｶﾞｲｼｬ　東京都千代田区１丁目２番３号</textarea>
+  <div class="row">
+    <div>
+      <label>変換の向き</label>
+      <label class="inline"><input type="radio" name="zh-dir" value="h" checked> 全角 → 半角</label>
+      <label class="inline"><input type="radio" name="zh-dir" value="f"> 半角 → 全角</label>
+    </div>
+  </div>
+  <div>
+    <label>対象</label>
+    <label class="inline"><input type="checkbox" id="zh-alnum" checked> 英数字</label>
+    <label class="inline"><input type="checkbox" id="zh-kana" checked> カタカナ</label>
+    <label class="inline"><input type="checkbox" id="zh-symbol" checked> 記号</label>
+    <label class="inline"><input type="checkbox" id="zh-space" checked> スペース</label>
+  </div>
+  <p class="note">おすすめ設定：住所・電話番号は「全角→半角・英数字と記号」、名前のカナは「半角→全角・カタカナ」。</p>
+  <label for="zh-out">変換結果</label>
+  <textarea id="zh-out" class="out" readonly></textarea>
+  <button type="button" data-copy="zh-out">結果をコピー</button>
+  <span class="note" id="zh-count"></span>
+</div>
+
+<script>
+(function () {
+  var $ = TB.$;
+  function run() {
+    var dir = document.querySelector('input[name=zh-dir]:checked').value;
+    var opt = { alnum: $('zh-alnum').checked, symbol: $('zh-symbol').checked, space: $('zh-space').checked };
+    var s = $('zh-in').value, before = s;
+    if (dir === 'h') {
+      s = TB.fullAsciiToHalf(s, opt);
+      if ($('zh-kana').checked) s = TB.fullKanaToHalf(s);
+    } else {
+      s = TB.halfAsciiToFull(s, opt);
+      if ($('zh-kana').checked) s = TB.halfKanaToFull(s);
+    }
+    $('zh-out').value = s;
+    var a = Array.from(before), b = Array.from(s), n = 0;
+    if (a.length === b.length) { for (var i = 0; i < a.length; i++) if (a[i] !== b[i]) n++; $('zh-count').textContent = n + ' 文字を変換しました'; }
+    else $('zh-count').textContent = '変換しました（濁点の結合・分離により文字数が変わっています）';
+  }
+  document.querySelectorAll('#zh-in,input[name=zh-dir],#zh-alnum,#zh-kana,#zh-symbol,#zh-space').forEach(function (el) {
+    el.addEventListener('input', run); el.addEventListener('change', run);
+  });
+  run();
+})();
+</script>
+
+<h2>使い方</h2>
+<p>テキストを貼り付け、変換の向きと対象（英数字・カタカナ・記号・スペース）を選ぶだけで、結果が即座に表示されます。「対象」のチェックを外した種類は変換されずにそのまま残ります。</p>
+
+<h2>よく使う組み合わせ</h2>
+<table>
+  <tr><th>目的</th><th>設定</th></tr>
+  <tr><td>ECサイトやフォームの入力値をそろえる（電話番号・郵便番号）</td><td>全角→半角／英数字・記号</td></tr>
+  <tr><td>半角カナの名簿を読みやすくする</td><td>半角→全角／カタカナのみ</td></tr>
+  <tr><td>文書の体裁を整える（全角英数字を半角に）</td><td>全角→半角／英数字のみ</td></tr>
+  <tr><td>銀行振込用の名義を作る</td><td><a href="../zengin-kana/">振込用 半角カナ変換</a>を使うと、小さい文字や長音も規定どおりに変換できます</td></tr>
+</table>
+
+<h2>よくある質問</h2>
+<details><summary>「ｶﾞ」のような濁点付き半角カナも変換できますか？</summary><p>はい。半角→全角の変換では「ｶ」＋「ﾞ」の2文字を「ガ」の1文字にまとめます。全角→半角では「ガ」を「ｶﾞ」の2文字に分けます。</p></details>
+<details><summary>「ー」（長音）や「、」「。」はどうなりますか？</summary><p>「カタカナ」にチェックがあると、長音・句読点・かぎかっこ・中黒も半角（ｰ ､ ｡ ｢ ｣ ･）に変換します。</p></details>
+<details><summary>ひらがなは半角になりますか？</summary><p>半角のひらがなは存在しないため、ひらがなは変換されません。カタカナに変換したい場合は<a href="../hira-kata/">ひらがな・カタカナ変換</a>をご利用ください。</p></details>
+
+<div class="cta"><b>オフライン版（全14ツール・1ファイル）</b><br>
+社内ネットワークの外に出られないPCや、外部サイトの利用が制限された職場でも使えるよう、全ツールを1つのHTMLファイルにまとめました。ダブルクリックで開くだけ、インストール不要です。
+<a href="../offline/">詳しく見る →</a></div>
+<h2>関連ツール</h2>
+<div class="grid"><a class="tile" href="../hira-kata/"><b>ひらがな ⇔ カタカナ 変換</b><small>ひらがなをカタカナに、カタカナをひらがなに一括変換。半角カナ（ｶﾀｶﾅ）も自動で処理します。</small></a><a class="tile" href="../zengin-kana/"><b>振込用 半角カナ変換（口座名義・全銀協規定文字）</b><small>振込先の口座名義を、銀行で使える半角カナに一発変換。株式会社→ｶ) などの法人略語、小さい文字・長音の置換、使えない文字の検出まで。</small></a><a class="tile" href="../moji-count/"><b>文字数カウント（バイト数・原稿用紙・X換算）</b><small>文字数・空白を除いた文字数・行数に加え、Shift_JIS／UTF-8のバイト数、原稿用紙の枚数、X（旧Twitter）の文字数まで一度に表示。</small></a></div>
+</main>
+<footer class="site"><div class="in">
+<p>🔒 このサイトのツールは、入力したデータをサーバーへ送信しません。変換・計算はすべてお使いのブラウザ内で行われます。</p>
+<p><a href="../about/">運営者情報</a>　<a href="../privacy/">プライバシーポリシー</a>　<a href="../tokushoho/">特定商取引法に基づく表記</a>　<a href="../offline/">オフライン版</a></p>
+<p>© 2026 ツールばこ — AI（Claude）が企画・開発・運営しています。</p>
+</div></footer>
+</body></html>

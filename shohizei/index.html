@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>消費税計算（税込・税抜・インボイス対応）| 10%・8%混在の請求書にも | ツールばこ</title>
+<meta name="description" content="消費税を計算する無料ツール。税込・税抜の相互変換（10%・8%）、端数処理（切り捨て・四捨五入・切り上げ）の選択に加え、軽減税率が混在する請求書の税率ごとの合計と消費税額を、インボイス制度（適格請求書）の「税率ごとに1回の端数処理」ルールで計算します。">
+<link rel="canonical" href="https://yyy8m.github.io/shohizei/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="消費税計算（税込・税抜・インボイス対応）| 10%・8%混在の請求書にも | ツールばこ">
+<meta property="og:description" content="消費税を計算する無料ツール。税込・税抜の相互変換（10%・8%）、端数処理（切り捨て・四捨五入・切り上げ）の選択に加え、軽減税率が混在する請求書の税率ごとの合計と消費税額を、インボイス制度（適格請求書）の「税率ごとに1回の端数処理」ルールで計算します。">
+<meta property="og:url" content="https://yyy8m.github.io/shohizei/">
+<meta property="og:site_name" content="ツールばこ">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/style.css?v=1.0">
+
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebApplication", "name": "消費税計算（税込⇔税抜・インボイス制度対応）", "description": "消費税を計算する無料ツール。税込・税抜の相互変換（10%・8%）、端数処理（切り捨て・四捨五入・切り上げ）の選択に加え、軽減税率が混在する請求書の税率ごとの合計と消費税額を、インボイス制度（適格請求書）の「税率ごとに1回の端数処理」ルールで計算します。", "url": "https://yyy8m.github.io/shohizei/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (Web browser)", "inLanguage": "ja", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "JPY"}}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "ツールばこ", "item": "https://yyy8m.github.io/"}, {"@type": "ListItem", "position": 2, "name": "消費税計算（税込⇔税抜・インボイス制度対応）", "item": "https://yyy8m.github.io/shohizei/"}]}]}</script>
+</head>
+<body>
+<header class="site"><div class="in">
+<a class="logo" href="../">🧰 ツール<span>ばこ</span></a>
+<nav><a href="../#jimu">事務・経理</a><a href="../#moji">文字・テキスト</a><a href="../#tetsuzuki">手続き</a><a href="../#data">データ</a><a href="../offline/">オフライン版</a></nav>
+</div></header>
+
+<main>
+<div class="crumb"><a href="../">ツールばこ</a> › 事務・経理</div>
+<h1>消費税計算（税込⇔税抜・インボイス制度対応）</h1>
+<p class="lead">税込⇔税抜の変換と、10%・8%が混在する請求書の税率ごとの消費税額を、インボイス制度の端数処理ルールで計算。<br><span class="badge">無料</span><span class="badge">登録不要</span><span class="badge">データ送信なし</span></p>
+<script src="../assets/common.js?v=1.0"></script>
+<div class="card">
+  <h3 style="margin-top:0">税込 ⇔ 税抜</h3>
+  <div class="row">
+    <div><label for="st-amt">金額（円）</label><input type="number" id="st-amt" value="10000" min="0"></div>
+    <div><label for="st-dir">入力した金額は</label>
+      <select id="st-dir"><option value="ex">税抜（本体価格）</option><option value="in">税込</option></select></div>
+    <div><label for="st-rate">税率</label>
+      <select id="st-rate"><option value="10">10%（標準税率）</option><option value="8">8%（軽減税率）</option></select></div>
+    <div><label for="st-round">端数処理</label>
+      <select id="st-round"><option value="floor">切り捨て</option><option value="round">四捨五入</option><option value="ceil">切り上げ</option></select></div>
+  </div>
+  <div class="stats" style="margin-top:12px">
+    <div><b id="st-ex">0</b><span>税抜金額（円）</span></div>
+    <div><b id="st-tax">0</b><span>消費税額（円）</span></div>
+    <div><b id="st-in">0</b><span>税込金額（円）</span></div>
+  </div>
+</div>
+
+<div class="card">
+  <h3 style="margin-top:0">請求書の消費税（インボイス対応・税率混在）</h3>
+  <p class="note">明細ごとに税抜または税込の金額と税率を入力すると、税率ごとの合計と消費税額を計算します（端数処理は上の設定を使用）。</p>
+  <label class="inline"><input type="radio" name="st-basis" value="ex" checked> 明細は税抜</label>
+  <label class="inline"><input type="radio" name="st-basis" value="in"> 明細は税込</label>
+  <div class="scroll"><table id="st-lines"></table></div>
+  <button type="button" class="sub" id="st-add">明細を追加</button>
+  <div class="result" id="st-sum" style="margin-top:12px"></div>
+  <button type="button" data-copy="st-sum">集計をコピー</button>
+</div>
+
+<script>
+(function () {
+  var $ = TB.$;
+  var lines = [{ n: 'コピー用紙', a: 3000, r: 10 }, { n: '飲料（軽減税率）', a: 1200, r: 8 }, { n: '作業費', a: 15000, r: 10 }];
+  function rnd(x) { var m = $('st-round').value; var e = 1e-9; return m === 'floor' ? Math.floor(x + e) : m === 'ceil' ? Math.ceil(x - e) : Math.round(x); }
+  function yen(n) { return n.toLocaleString('ja-JP'); }
+  function calc(amount, rate, dir) {
+    if (dir === 'ex') { var t = rnd(amount * rate / 100); return { ex: amount, tax: t, inc: amount + t }; }
+    var tax = rnd(amount * rate / (100 + rate)); return { ex: amount - tax, tax: tax, inc: amount };
+  }
+  function runSimple() {
+    var a = Math.max(0, Math.floor(+$('st-amt').value || 0));
+    var r = calc(a, +$('st-rate').value, $('st-dir').value);
+    $('st-ex').textContent = yen(r.ex); $('st-tax').textContent = yen(r.tax); $('st-in').textContent = yen(r.inc);
+  }
+  function drawLines() {
+    $('st-lines').innerHTML = '<tr><th>品目</th><th>金額（円）</th><th>税率</th><th></th></tr>' + lines.map(function (l, i) {
+      return '<tr><td><input type="text" data-i="' + i + '" data-k="n" value="' + TB.esc(l.n) + '"></td>' +
+        '<td><input type="number" data-i="' + i + '" data-k="a" value="' + l.a + '" style="min-width:7em"></td>' +
+        '<td><select data-i="' + i + '" data-k="r"><option value="10"' + (l.r == 10 ? ' selected' : '') + '>10%</option><option value="8"' + (l.r == 8 ? ' selected' : '') + '>8%※</option></select></td>' +
+        '<td><button type="button" class="sub" data-del="' + i + '" style="margin:0">削除</button></td></tr>';
+    }).join('');
+    runLines();
+  }
+  function runLines() {
+    var basis = document.querySelector('input[name=st-basis]:checked').value;
+    var g = { 10: 0, 8: 0 };
+    lines.forEach(function (l) { g[l.r] += Math.floor(+l.a || 0); });
+    var out = [], totalEx = 0, totalTax = 0;
+    [10, 8].forEach(function (r) {
+      if (!g[r]) return;
+      var c = calc(g[r], r, basis);
+      totalEx += c.ex; totalTax += c.tax;
+      out.push(r + '%対象 ' + (basis === 'ex' ? '税抜 ' + yen(c.ex) : '税込 ' + yen(c.inc)) + '円　消費税 ' + yen(c.tax) + '円');
+    });
+    out.push('――――――――――');
+    out.push('税抜合計 ' + yen(totalEx) + '円　消費税合計 ' + yen(totalTax) + '円　税込合計 ' + yen(totalEx + totalTax) + '円');
+    if (g[8]) out.push('※は軽減税率（8%）対象');
+    $('st-sum').textContent = out.join('\n');
+  }
+  $('st-lines').addEventListener('input', function (e) {
+    var i = e.target.getAttribute('data-i'), k = e.target.getAttribute('data-k');
+    if (i === null) return;
+    lines[i][k] = k === 'r' ? +e.target.value : k === 'a' ? +e.target.value : e.target.value;
+    runLines();
+  });
+  $('st-lines').addEventListener('change', function (e) { if (e.target.getAttribute('data-k') === 'r') { lines[e.target.getAttribute('data-i')].r = +e.target.value; runLines(); } });
+  $('st-lines').addEventListener('click', function (e) { var d = e.target.getAttribute('data-del'); if (d !== null) { lines.splice(+d, 1); drawLines(); } });
+  $('st-add').addEventListener('click', function () { lines.push({ n: '', a: 0, r: 10 }); drawLines(); });
+  document.querySelectorAll('input[name=st-basis]').forEach(function (el) { el.addEventListener('change', runLines); });
+  ['st-amt', 'st-dir', 'st-rate', 'st-round'].forEach(function (id) {
+    $(id).addEventListener('input', function () { runSimple(); runLines(); });
+    $(id).addEventListener('change', function () { runSimple(); runLines(); });
+  });
+  runSimple(); drawLines();
+})();
+</script>
+
+<h2>計算式</h2>
+<table>
+  <tr><th>求めたいもの</th><th>計算式（10%の場合）</th></tr>
+  <tr><td>税抜 → 消費税額</td><td>税抜金額 × 10 ÷ 100（端数処理）</td></tr>
+  <tr><td>税込 → 消費税額</td><td>税込金額 × 10 ÷ 110（端数処理）</td></tr>
+  <tr><td>税込 → 税抜</td><td>税込金額 − 消費税額</td></tr>
+</table>
+<h2>インボイス制度の端数処理ルール</h2>
+<p>適格請求書（インボイス）では、消費税額の端数処理は<strong>「1つの請求書につき、税率ごとに1回」</strong>と定められています。明細の1行ずつに消費税を計算して端数処理し、それを合計する方法は認められていません。このツールの請求書計算は、税率ごとに金額を合計してから1回だけ端数処理します。</p>
+<p>端数を切り捨て・四捨五入・切り上げのどれにするかは事業者が任意に決められますが、実務では切り捨てが最も一般的です。</p>
+<h2>よくある質問</h2>
+<details><summary>軽減税率（8%）の対象は？</summary><p>酒類・外食を除く飲食料品と、週2回以上発行され定期購読契約に基づく新聞が主な対象です。</p></details>
+<details><summary>税込金額から逆算した税抜金額が1円ずれるのはなぜ？</summary><p>消費税額の端数処理によって、税抜 → 税込 → 税抜と往復したときに1円の差が出ることがあります。請求書では、どちらを基準にしたか（税抜・税込）を明示するのが確実です。</p></details>
+<p class="note">※ 計算結果は参考値です。税務上の判断は税理士や所轄の税務署にご確認ください。</p>
+
+<div class="cta"><b>オフライン版（全14ツール・1ファイル）</b><br>
+社内ネットワークの外に出られないPCや、外部サイトの利用が制限された職場でも使えるよう、全ツールを1つのHTMLファイルにまとめました。ダブルクリックで開くだけ、インストール不要です。
+<a href="../offline/">詳しく見る →</a></div>
+<h2>関連ツール</h2>
+<div class="grid"><a class="tile" href="../kansuji/"><b>漢数字・大字（壱弐参）変換</b><small>数字を漢数字や大字（壱・弐・参・拾）に、漢数字を数字に相互変換。「金壱萬円也」の領収書表記やのし袋にも。</small></a><a class="tile" href="../eigyobi/"><b>営業日計算（日本の祝日対応）</b><small>「5営業日後は何日？」「この期間の営業日数は？」を祝日・振替休日・年末年始込みで計算。祝日一覧も表示。</small></a><a class="tile" href="../wareki/"><b>和暦 ⇔ 西暦 変換・年齢早見表</b><small>令和・平成・昭和などの和暦と西暦を日付単位で相互変換。生年ごとの年齢・干支・学年がわかる早見表付き。</small></a></div>
+</main>
+<footer class="site"><div class="in">
+<p>🔒 このサイトのツールは、入力したデータをサーバーへ送信しません。変換・計算はすべてお使いのブラウザ内で行われます。</p>
+<p><a href="../about/">運営者情報</a>　<a href="../privacy/">プライバシーポリシー</a>　<a href="../tokushoho/">特定商取引法に基づく表記</a>　<a href="../offline/">オフライン版</a></p>
+<p>© 2026 ツールばこ — AI（Claude）が企画・開発・運営しています。</p>
+</div></footer>
+</body></html>

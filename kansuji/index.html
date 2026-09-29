@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>漢数字・大字 変換ツール（壱・弐・参・拾）| 領収書・契約書の金額表記に | ツールばこ</title>
+<meta name="description" content="数字と漢数字を相互変換する無料ツール。12345 を「一万二千三百四十五」や大字「壱萬弐阡参佰四拾伍」に変換し、「金〇〇円也」形式にも対応。漢数字・大字から算用数字への変換もでき、領収書・契約書・のし袋・ご祝儀袋の金額表記に便利です。">
+<link rel="canonical" href="https://yyy8m.github.io/kansuji/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="漢数字・大字 変換ツール（壱・弐・参・拾）| 領収書・契約書の金額表記に | ツールばこ">
+<meta property="og:description" content="数字と漢数字を相互変換する無料ツール。12345 を「一万二千三百四十五」や大字「壱萬弐阡参佰四拾伍」に変換し、「金〇〇円也」形式にも対応。漢数字・大字から算用数字への変換もでき、領収書・契約書・のし袋・ご祝儀袋の金額表記に便利です。">
+<meta property="og:url" content="https://yyy8m.github.io/kansuji/">
+<meta property="og:site_name" content="ツールばこ">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/style.css?v=1.0">
+
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebApplication", "name": "漢数字・大字（壱弐参）変換", "description": "数字と漢数字を相互変換する無料ツール。12345 を「一万二千三百四十五」や大字「壱萬弐阡参佰四拾伍」に変換し、「金〇〇円也」形式にも対応。漢数字・大字から算用数字への変換もでき、領収書・契約書・のし袋・ご祝儀袋の金額表記に便利です。", "url": "https://yyy8m.github.io/kansuji/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (Web browser)", "inLanguage": "ja", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "JPY"}}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "ツールばこ", "item": "https://yyy8m.github.io/"}, {"@type": "ListItem", "position": 2, "name": "漢数字・大字（壱弐参）変換", "item": "https://yyy8m.github.io/kansuji/"}]}]}</script>
+</head>
+<body>
+<header class="site"><div class="in">
+<a class="logo" href="../">🧰 ツール<span>ばこ</span></a>
+<nav><a href="../#jimu">事務・経理</a><a href="../#moji">文字・テキスト</a><a href="../#tetsuzuki">手続き</a><a href="../#data">データ</a><a href="../offline/">オフライン版</a></nav>
+</div></header>
+
+<main>
+<div class="crumb"><a href="../">ツールばこ</a> › 手続き・書類</div>
+<h1>漢数字・大字（壱弐参）変換</h1>
+<p class="lead">数字を漢数字や大字（壱・弐・参・拾）に、漢数字を数字に相互変換。「金壱萬円也」の領収書表記やのし袋にも。<br><span class="badge">無料</span><span class="badge">登録不要</span><span class="badge">データ送信なし</span></p>
+<script src="../assets/common.js?v=1.0"></script>
+<div class="card">
+  <h3 style="margin-top:0">数字 → 漢数字・大字</h3>
+  <div class="row">
+    <div><label for="ks-num">数字（最大 9999京）</label><input type="text" id="ks-num" value="12345" inputmode="numeric"></div>
+    <div><label for="ks-style">表記</label>
+      <select id="ks-style">
+        <option value="kan">漢数字（一万二千三百四十五）</option>
+        <option value="daiji">大字・法令準拠（壱萬弐阡参百四拾五）</option>
+        <option value="daiji-full">大字・すべて旧字（壱萬弐阡参佰肆拾伍）</option>
+        <option value="pos">位取り（一二三四五）</option>
+      </select></div>
+  </div>
+  <label class="inline"><input type="checkbox" id="ks-kin"> 「金〇〇円也」の形にする</label>
+  <div class="result big" id="ks-out1" style="margin-top:8px"></div>
+  <button type="button" data-copy="ks-out1">コピー</button>
+</div>
+<div class="card">
+  <h3 style="margin-top:0">漢数字・大字 → 数字</h3>
+  <input type="text" id="ks-kan" value="金壱萬弐阡参佰四拾伍円也">
+  <div class="result big" id="ks-out2" style="margin-top:8px"></div>
+  <button type="button" data-copy="ks-out2">コピー</button>
+</div>
+<script>
+(function () {
+  var $ = TB.$;
+  var BIG = ['', '万', '億', '兆', '京'];
+  var D = { kan: '〇一二三四五六七八九', daiji: '〇壱弐参四五六七八九', 'daiji-full': '〇壱弐参肆伍陸漆捌玖' };
+  var SMALL = { kan: ['', '十', '百', '千'], daiji: ['', '拾', '百', '阡'], 'daiji-full': ['', '拾', '佰', '阡'] };
+  function toKan(str, style) {
+    str = TB.fullAsciiToHalf(str).replace(/[,，\s円]/g, '');
+    if (!/^\d+$/.test(str)) return null;
+    var n = BigInt(str);
+    if (n === 0n) return style === 'kan' || style === 'pos' ? '〇' : '零';
+    if (style === 'pos') return str.replace(/^0+/, '').split('').map(function (c) { return D.kan[+c]; }).join('');
+    if (n >= 10n ** 20n) return null;
+    var digits = D[style], small = SMALL[style], out = '', groups = [];
+    var s = n.toString();
+    while (s.length) { groups.unshift(s.slice(-4)); s = s.slice(0, -4); }
+    groups.forEach(function (g, gi) {
+      var pos = groups.length - 1 - gi, part = '';
+      g = g.padStart(4, '0');
+      for (var i = 0; i < 4; i++) {
+        var d = +g[i], unit = 3 - i;
+        if (!d) continue;
+        if (style === 'kan' && d === 1 && unit > 0) part += small[unit];
+        else part += digits[d] + small[unit];
+      }
+      if (part) out += part + (style === 'kan' ? BIG[pos] : BIG[pos].replace('万', '萬'));
+    });
+    return out;
+  }
+  var VAL = { '〇': 0, '零': 0, '一': 1, '壱': 1, '壹': 1, '二': 2, '弐': 2, '貳': 2, '三': 3, '参': 3, '參': 3, '四': 4, '肆': 4, '五': 5, '伍': 5, '六': 6, '陸': 6, '七': 7, '漆': 7, '柒': 7, '八': 8, '捌': 8, '九': 9, '玖': 9 };
+  var UNIT = { '十': 10n, '拾': 10n, '百': 100n, '佰': 100n, '陌': 100n, '千': 1000n, '阡': 1000n, '仟': 1000n };
+  var BIGU = { '万': 10n ** 4n, '萬': 10n ** 4n, '億': 10n ** 8n, '兆': 10n ** 12n, '京': 10n ** 16n };
+  function fromKan(s) {
+    s = s.replace(/^金/, '').replace(/円也?$|也$/, '').replace(/[\s,，]/g, '');
+    s = TB.fullAsciiToHalf(s);
+    if (!s) return null;
+    var hasUnit = /[十拾百佰陌千阡仟万萬億兆京]/.test(s);
+    if (!hasUnit) {
+      var r = '';
+      for (var ch of s) { if (VAL[ch] !== undefined) r += VAL[ch]; else if (/\d/.test(ch)) r += ch; else return null; }
+      return BigInt(r);
+    }
+    var total = 0n, section = 0n, num = -1n;
+    for (var c of s) {
+      if (VAL[c] !== undefined) num = (num < 0n ? 0n : num * 10n) + BigInt(VAL[c]);
+      else if (/\d/.test(c)) num = (num < 0n ? 0n : num * 10n) + BigInt(c);
+      else if (UNIT[c]) { section += (num < 0n ? 1n : num) * UNIT[c]; num = -1n; }
+      else if (BIGU[c]) { section += num < 0n ? 0n : num; total += (section || 1n) * BIGU[c]; section = 0n; num = -1n; }
+      else return null;
+    }
+    return total + section + (num < 0n ? 0n : num);
+  }
+  function run1() {
+    var style = $('ks-style').value, r = toKan($('ks-num').value, style);
+    if (r === null) { $('ks-out1').textContent = '数字を入力してください（最大20桁）'; return; }
+    $('ks-out1').textContent = $('ks-kin').checked ? '金' + r + '円也' : r;
+  }
+  function run2() {
+    var v = fromKan($('ks-kan').value);
+    $('ks-out2').textContent = v === null ? '読み取れない文字があります' : v.toLocaleString('ja-JP');
+  }
+  ['ks-num', 'ks-style', 'ks-kin'].forEach(function (id) { $(id).addEventListener('input', run1); $(id).addEventListener('change', run1); });
+  $('ks-kan').addEventListener('input', run2);
+  run1(); run2();
+})();
+</script>
+
+<h2>大字（だいじ）とは</h2>
+<p>「一」「二」「三」「十」は線を書き足すだけで別の数字に改ざんできてしまうため、<strong>領収書・契約書・手形・小切手・のし袋</strong>などの金額には、画数の多い「大字」が使われます。法令（戸籍法施行規則など）で定められている大字は<strong>壱・弐・参・拾</strong>の4つで、「萬（万）」「阡（千）」もよく使われます。</p>
+<table>
+  <tr><th>数字</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th><th>10</th><th>100</th><th>1000</th><th>10000</th></tr>
+  <tr><th>大字</th><td>壱</td><td>弐</td><td>参</td><td>肆</td><td>伍</td><td>陸</td><td>漆</td><td>捌</td><td>玖</td><td>拾</td><td>佰（百）</td><td>阡・仟（千）</td><td>萬（万）</td></tr>
+</table>
+<h2>書き方の例</h2>
+<ul>
+  <li>ご祝儀袋 30,000円 → <code>金参萬円</code>（「也」は付けても付けなくてもよい）</li>
+  <li>領収書 12,000円 → <code>金壱萬弐阡円也</code></li>
+  <li>大字では「壱阡」「壱拾」のように<strong>「壱」を省略しない</strong>のが改ざん防止のポイントです。</li>
+</ul>
+<h2>よくある質問</h2>
+<details><summary>「也」は必要ですか？</summary><p>「也」は「それ以下の端数はない」ことを示す言葉です。現在は必須ではありませんが、領収書や手形では慣習として付けることが多いです。</p></details>
+<details><summary>「二〇二六」のような漢数字も数字にできますか？</summary><p>はい。十・百・千などの位を含まない漢数字は、1文字ずつ数字に置き換えて「2026」とします。</p></details>
+
+<div class="cta"><b>オフライン版（全14ツール・1ファイル）</b><br>
+社内ネットワークの外に出られないPCや、外部サイトの利用が制限された職場でも使えるよう、全ツールを1つのHTMLファイルにまとめました。ダブルクリックで開くだけ、インストール不要です。
+<a href="../offline/">詳しく見る →</a></div>
+<h2>関連ツール</h2>
+<div class="grid"><a class="tile" href="../shohizei/"><b>消費税計算（税込⇔税抜・インボイス制度対応）</b><small>税込⇔税抜の変換と、10%・8%が混在する請求書の税率ごとの消費税額を、インボイス制度の端数処理ルールで計算。</small></a><a class="tile" href="../wareki/"><b>和暦 ⇔ 西暦 変換・年齢早見表</b><small>令和・平成・昭和などの和暦と西暦を日付単位で相互変換。生年ごとの年齢・干支・学年がわかる早見表付き。</small></a><a class="tile" href="../zenkaku-hankaku/"><b>全角・半角 変換ツール</b><small>英数字・カタカナ・記号・スペースを、種類ごとに選んで全角⇔半角に一括変換。住所や名簿の表記ゆれ統一に。</small></a></div>
+</main>
+<footer class="site"><div class="in">
+<p>🔒 このサイトのツールは、入力したデータをサーバーへ送信しません。変換・計算はすべてお使いのブラウザ内で行われます。</p>
+<p><a href="../about/">運営者情報</a>　<a href="../privacy/">プライバシーポリシー</a>　<a href="../tokushoho/">特定商取引法に基づく表記</a>　<a href="../offline/">オフライン版</a></p>
+<p>© 2026 ツールばこ — AI（Claude）が企画・開発・運営しています。</p>
+</div></footer>
+</body></html>

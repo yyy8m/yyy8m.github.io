@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>JSON整形・圧縮・検証ツール（エラー位置表示・キーのソート） | ツールばこ</title>
+<meta name="description" content="JSONを整形（インデント）・圧縮（minify）・検証できる無料ツール。構文エラーの行と列を表示し、キーのアルファベット順ソート、\uXXXX 形式にエスケープされた日本語の復元にも対応。APIレスポンスや設定ファイルの確認に。データはブラウザ内だけで処理され送信されません。">
+<link rel="canonical" href="https://yyy8m.github.io/json-format/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="JSON整形・圧縮・検証ツール（エラー位置表示・キーのソート） | ツールばこ">
+<meta property="og:description" content="JSONを整形（インデント）・圧縮（minify）・検証できる無料ツール。構文エラーの行と列を表示し、キーのアルファベット順ソート、\uXXXX 形式にエスケープされた日本語の復元にも対応。APIレスポンスや設定ファイルの確認に。データはブラウザ内だけで処理され送信されません。">
+<meta property="og:url" content="https://yyy8m.github.io/json-format/">
+<meta property="og:site_name" content="ツールばこ">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/style.css?v=1.0">
+
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebApplication", "name": "JSON 整形・圧縮・検証", "description": "JSONを整形（インデント）・圧縮（minify）・検証できる無料ツール。構文エラーの行と列を表示し、キーのアルファベット順ソート、\\uXXXX 形式にエスケープされた日本語の復元にも対応。APIレスポンスや設定ファイルの確認に。データはブラウザ内だけで処理され送信されません。", "url": "https://yyy8m.github.io/json-format/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (Web browser)", "inLanguage": "ja", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "JPY"}}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "ツールばこ", "item": "https://yyy8m.github.io/"}, {"@type": "ListItem", "position": 2, "name": "JSON 整形・圧縮・検証", "item": "https://yyy8m.github.io/json-format/"}]}]}</script>
+</head>
+<body>
+<header class="site"><div class="in">
+<a class="logo" href="../">🧰 ツール<span>ばこ</span></a>
+<nav><a href="../#jimu">事務・経理</a><a href="../#moji">文字・テキスト</a><a href="../#tetsuzuki">手続き</a><a href="../#data">データ</a><a href="../offline/">オフライン版</a></nav>
+</div></header>
+
+<main>
+<div class="crumb"><a href="../">ツールばこ</a> › データ・開発</div>
+<h1>JSON 整形・圧縮・検証</h1>
+<p class="lead">JSONを見やすく整形・1行に圧縮。構文エラーは行と列を表示。キーのソートや日本語のエスケープ解除にも対応。<br><span class="badge">無料</span><span class="badge">登録不要</span><span class="badge">データ送信なし</span></p>
+<script src="../assets/common.js?v=1.0"></script>
+<div class="card">
+  <label for="jf-in">JSON を貼り付け</label>
+  <textarea id="jf-in" rows="8">{"name":"ツールばこ","tools":["zengin-kana","csv-mojibake"],"free":true,"version":1}</textarea>
+  <div class="row">
+    <div><label for="jf-indent">インデント</label>
+      <select id="jf-indent"><option value="2">スペース2</option><option value="4">スペース4</option><option value="tab">タブ</option></select></div>
+    <div>
+      <label class="inline"><input type="checkbox" id="jf-sort"> キーをソート</label>
+    </div>
+  </div>
+  <button type="button" id="jf-pretty">整形する</button>
+  <button type="button" class="sub" id="jf-min">1行に圧縮</button>
+  <p id="jf-msg"></p>
+  <textarea id="jf-out" class="out" rows="10" readonly></textarea>
+  <button type="button" data-copy="jf-out">結果をコピー</button>
+</div>
+<script>
+(function () {
+  var $ = TB.$;
+  function sortKeys(v) {
+    if (Array.isArray(v)) return v.map(sortKeys);
+    if (v && typeof v === 'object') { var o = {}; Object.keys(v).sort().forEach(function (k) { o[k] = sortKeys(v[k]); }); return o; }
+    return v;
+  }
+  function locate(text, err) {
+    var m = /position (\d+)/.exec(err.message), lc = /line (\d+) column (\d+)/.exec(err.message);
+    if (lc) return { line: +lc[1], col: +lc[2] };
+    if (!m) return null;
+    var pos = +m[1], before = text.slice(0, pos).split('\n');
+    return { line: before.length, col: before[before.length - 1].length + 1 };
+  }
+  function go(minify) {
+    var text = $('jf-in').value, v;
+    try { v = JSON.parse(text); }
+    catch (e) {
+      var p = locate(text, e);
+      $('jf-msg').innerHTML = '<span class="err">JSON の構文エラー' + (p ? '：' + p.line + ' 行目 ' + p.col + ' 文字目付近' : '') + '<br>' + TB.esc(e.message) + '</span>';
+      $('jf-out').value = '';
+      return;
+    }
+    if ($('jf-sort').checked) v = sortKeys(v);
+    var ind = $('jf-indent').value;
+    $('jf-out').value = minify ? JSON.stringify(v) : JSON.stringify(v, null, ind === 'tab' ? '\t' : +ind);
+    $('jf-msg').innerHTML = '<span class="ok">正しい JSON です（' + (minify ? '圧縮' : '整形') + 'しました）</span>';
+  }
+  $('jf-pretty').addEventListener('click', function () { go(false); });
+  $('jf-min').addEventListener('click', function () { go(true); });
+  go(false);
+})();
+</script>
+
+<h2>使い方</h2>
+<p>JSON を貼り付けて「整形する」を押すと、インデント付きの読みやすい形で表示します。<code>ツ</code> のようにエスケープされた日本語も自動で元の文字に戻ります。「1行に圧縮」は空白と改行を取り除き、データ量を最小にします。</p>
+<h2>よくあるエラー</h2>
+<table>
+  <tr><th>原因</th><th>例</th></tr>
+  <tr><td>最後の要素の後ろのカンマ</td><td><code>{"a":1,}</code></td></tr>
+  <tr><td>キーや文字列をシングルクォートで囲んでいる</td><td><code>{'a':'b'}</code></td></tr>
+  <tr><td>キーをクォートで囲んでいない</td><td><code>{a:1}</code></td></tr>
+  <tr><td>コメントが入っている</td><td><code>// comment</code>（JSON はコメント非対応）</td></tr>
+</table>
+<h2>よくある質問</h2>
+<details><summary>貼り付けたデータは送信されますか？</summary><p>されません。API のレスポンスや個人情報を含むデータでも、ブラウザ内だけで処理されます。</p></details>
+
+<div class="cta"><b>オフライン版（全14ツール・1ファイル）</b><br>
+社内ネットワークの外に出られないPCや、外部サイトの利用が制限された職場でも使えるよう、全ツールを1つのHTMLファイルにまとめました。ダブルクリックで開くだけ、インストール不要です。
+<a href="../offline/">詳しく見る →</a></div>
+<h2>関連ツール</h2>
+<div class="grid"><a class="tile" href="../csv-mojibake/"><b>CSVの文字化けを直す 文字コード変換（UTF-8 ⇔ Shift_JIS）</b><small>Excelで開くと文字化けするCSVを、BOM付きUTF-8やShift_JISに変換してダウンロード。ファイルはアップロードされません。</small></a><a class="tile" href="../moji-count/"><b>文字数カウント（バイト数・原稿用紙・X換算）</b><small>文字数・空白を除いた文字数・行数に加え、Shift_JIS／UTF-8のバイト数、原稿用紙の枚数、X（旧Twitter）の文字数まで一度に表示。</small></a><a class="tile" href="../izon-moji/"><b>機種依存文字チェッカー</b><small>①・㈱・㍉・髙・﨑・絵文字など、システムやメールで化けやすい文字を色付きで検出し、ワンクリックで安全な文字に置換。</small></a></div>
+</main>
+<footer class="site"><div class="in">
+<p>🔒 このサイトのツールは、入力したデータをサーバーへ送信しません。変換・計算はすべてお使いのブラウザ内で行われます。</p>
+<p><a href="../about/">運営者情報</a>　<a href="../privacy/">プライバシーポリシー</a>　<a href="../tokushoho/">特定商取引法に基づく表記</a>　<a href="../offline/">オフライン版</a></p>
+<p>© 2026 ツールばこ — AI（Claude）が企画・開発・運営しています。</p>
+</div></footer>
+</body></html>
