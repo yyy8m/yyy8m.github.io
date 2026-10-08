@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>生命保険料控除・地震保険料控除の計算（令和8年分・年末調整）| 23歳未満の扶養親族の特例（最高6万円）対応 | ツールばこ</title>
+<meta name="description" content="年末調整の保険料控除申告書で使う、生命保険料控除と地震保険料控除の控除額を計算する無料ツール。新契約・旧契約の両方がある場合も、国税庁「令和8年分 年末調整のしかた」の計算式Ⅰ〜Ⅲで最も有利な金額を自動で選びます。令和8・9年分の、年齢23歳未満の扶養親族がいる場合の一般生命保険料控除の特例（最高6万円）に対応。1円未満は切り上げ、合計上限12万円も反映します。">
+<link rel="canonical" href="https://yyy8m.github.io/hoken-kojo/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="生命保険料控除・地震保険料控除の計算（令和8年分・年末調整）| 23歳未満の扶養親族の特例（最高6万円）対応 | ツールばこ">
+<meta property="og:description" content="年末調整の保険料控除申告書で使う、生命保険料控除と地震保険料控除の控除額を計算する無料ツール。新契約・旧契約の両方がある場合も、国税庁「令和8年分 年末調整のしかた」の計算式Ⅰ〜Ⅲで最も有利な金額を自動で選びます。令和8・9年分の、年齢23歳未満の扶養親族がいる場合の一般生命保険料控除の特例（最高6万円）に対応。1円未満は切り上げ、合計上限12万円も反映します。">
+<meta property="og:url" content="https://yyy8m.github.io/hoken-kojo/">
+<meta property="og:site_name" content="ツールばこ">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="../assets/style.css?v=1.0">
+<meta name="google-site-verification" content="ZP3pmCW9ENK-prdJQUPVRrxcxiVMD55Nnfu-uAUkeNs">
+<script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebApplication", "name": "生命保険料控除・地震保険料控除の計算（令和8年分・年末調整）", "description": "年末調整の保険料控除申告書で使う、生命保険料控除と地震保険料控除の控除額を計算する無料ツール。新契約・旧契約の両方がある場合も、国税庁「令和8年分 年末調整のしかた」の計算式Ⅰ〜Ⅲで最も有利な金額を自動で選びます。令和8・9年分の、年齢23歳未満の扶養親族がいる場合の一般生命保険料控除の特例（最高6万円）に対応。1円未満は切り上げ、合計上限12万円も反映します。", "url": "https://yyy8m.github.io/hoken-kojo/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (Web browser)", "inLanguage": "ja", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "JPY"}}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "ツールばこ", "item": "https://yyy8m.github.io/"}, {"@type": "ListItem", "position": 2, "name": "生命保険料控除・地震保険料控除の計算（令和8年分・年末調整）", "item": "https://yyy8m.github.io/hoken-kojo/"}]}]}</script>
+</head>
+<body>
+<header class="site"><div class="in">
+<a class="logo" href="../">🧰 ツール<span>ばこ</span></a>
+<nav><a href="../#jimu">事務・経理</a><a href="../#moji">文字・テキスト</a><a href="../#tetsuzuki">手続き</a><a href="../#data">データ</a><a href="../offline/">オフライン版</a></nav>
+</div></header>
+<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "407423b538474caea789faf109651084"}'></script>
+<main>
+<div class="crumb"><a href="../">ツールばこ</a> › 事務・経理</div>
+<h1>生命保険料控除・地震保険料控除の計算（令和8年分・年末調整）</h1>
+<p class="lead">保険料控除申告書に書く生命保険料控除（一般・介護医療・個人年金、新旧契約）と地震保険料控除の控除額を、国税庁の計算式どおりに計算。令和8年分から始まった「23歳未満の扶養親族がいる場合の特例（一般の生命保険料 最高6万円）」にも対応。<br><span class="badge">無料</span><span class="badge">登録不要</span><span class="badge">データ送信なし</span></p>
+<script src="../assets/common.js?v=1.0"></script>
+<div class="card">
+  <h3 style="margin-top:0">生命保険料控除</h3>
+  <p class="note">それぞれの区分の、令和8年中に支払った保険料の合計額（剰余金・割戻金を受けた場合は差し引いた後の金額）を入力します。保険会社から届く「生命保険料控除証明書」に、区分（一般／介護医療／個人年金、新／旧）と金額が書かれています。ない区分は0のままにしてください。</p>
+  <div class="row">
+    <div><label for="hj-gn">一般の生命保険料（新）</label><input type="number" id="hj-gn" value="80000" min="0" step="1"></div>
+    <div><label for="hj-go">一般の生命保険料（旧）</label><input type="number" id="hj-go" value="0" min="0" step="1"></div>
+  </div>
+  <div class="row">
+    <div><label for="hj-km">介護医療保険料（新のみ）</label><input type="number" id="hj-km" value="0" min="0" step="1"></div>
+  </div>
+  <div class="row">
+    <div><label for="hj-pn">個人年金保険料（新）</label><input type="number" id="hj-pn" value="0" min="0" step="1"></div>
+    <div><label for="hj-po">個人年金保険料（旧）</label><input type="number" id="hj-po" value="0" min="0" step="1"></div>
+  </div>
+  <label class="inline"><input type="checkbox" id="hj-u23"> 年齢23歳未満の扶養親族がいる（令和8年分の特例を適用）</label>
+  <div class="result" id="hj-out" style="margin-top:12px"></div>
+  <button type="button" data-copy="hj-out">結果をコピー</button>
+</div>
+<div class="card">
+  <h3 style="margin-top:0">地震保険料控除</h3>
+  <div class="row">
+    <div><label for="hj-eq">地震保険料</label><input type="number" id="hj-eq" value="0" min="0" step="1"></div>
+    <div><label for="hj-lt">旧長期損害保険料</label><input type="number" id="hj-lt" value="0" min="0" step="1"></div>
+  </div>
+  <p class="note">旧長期損害保険料は、平成18年12月31日までに結んだ、満期返戻金のある保険期間10年以上の損害保険契約で、平成19年1月1日以後に契約を変更していないものの保険料です。1つの契約が両方に当たる場合は、どちらか一方にだけ入力してください。</p>
+  <div class="result" id="hj-out2" style="margin-top:12px"></div>
+  <button type="button" data-copy="hj-out2">結果をコピー</button>
+</div>
+<script>
+(function () {
+  var $ = TB.$;
+  function yen(n) { return n.toLocaleString('ja-JP'); }
+  // 国税庁「令和8年分 年末調整のしかた」の計算式（1円未満の端数は切り上げ）
+  function f1(x) { // 計算式Ⅰ: 新生命保険料・介護医療保険料・新個人年金保険料
+    if (x <= 20000) return x;
+    if (x <= 40000) return Math.ceil(x / 2) + 10000;
+    if (x <= 80000) return Math.ceil(x / 4) + 20000;
+    return 40000;
+  }
+  function f2(x) { // 計算式Ⅱ: 23歳未満の扶養親族を有する場合の新生命保険料（令和8・9年分）
+    if (x <= 30000) return x;
+    if (x <= 60000) return Math.ceil(x / 2) + 15000;
+    if (x <= 120000) return Math.ceil(x / 4) + 30000;
+    return 60000;
+  }
+  function f3(x) { // 計算式Ⅲ: 旧生命保険料・旧個人年金保険料
+    if (x <= 25000) return x;
+    if (x <= 50000) return Math.ceil(x / 2) + 12500;
+    if (x <= 100000) return Math.ceil(x / 4) + 25000;
+    return 50000;
+  }
+  // 新・旧それぞれのみの金額と、両方の合計（上限あり）のうち最も大きい金額
+  function best(nw, old, fNew, cap, label) {
+    var a = nw > 0 ? fNew(nw) : 0, b = old > 0 ? f3(old) : 0, c = (nw > 0 && old > 0) ? Math.min(a + b, cap) : 0;
+    var v = Math.max(a, b, c), how;
+    if (v === 0) how = '支払いなし';
+    else if (nw > 0 && old > 0) how = v === c && c >= a && c >= b ? '新旧の合計 ' + yen(a + b) + ' 円（上限' + yen(cap) + '円）を採用' : (v === b ? '旧契約だけで計算した方が有利（旧 ' + yen(b) + ' 円）' : '新契約だけで計算した方が有利（新 ' + yen(a) + ' 円）');
+    else how = nw > 0 ? '新契約: 計算式' + label : '旧契約: 計算式Ⅲ';
+    return { v: v, a: a, b: b, how: how };
+  }
+  function num(id) { return Math.max(0, Math.floor(+$(id).value || 0)); }
+  function run() {
+    var u23 = $('hj-u23').checked;
+    var g = best(num('hj-gn'), num('hj-go'), u23 ? f2 : f1, u23 ? 60000 : 40000, u23 ? 'Ⅱ（23歳未満の扶養親族の特例）' : 'Ⅰ');
+    var km = num('hj-km'), k = f1(km);
+    var p = best(num('hj-pn'), num('hj-po'), f1, 40000, 'Ⅰ');
+    var sum = g.v + k + p.v, total = Math.min(sum, 120000), L = [];
+    L.push('令和8年分 生命保険料控除');
+    L.push('一般の生命保険料の控除額　' + yen(g.v) + ' 円（' + g.how + '）');
+    L.push('介護医療保険料の控除額　　' + yen(k) + ' 円' + (km > 0 ? '（計算式Ⅰ）' : ''));
+    L.push('個人年金保険料の控除額　　' + yen(p.v) + ' 円（' + p.how + '）');
+    L.push('――――――――――');
+    L.push('生命保険料控除額　　　　　' + yen(total) + ' 円' + (sum > 120000 ? '（合計 ' + yen(sum) + ' 円 → 上限12万円）' : ''));
+    if (u23 && num('hj-gn') === 0 && num('hj-go') > 0) L.push('※ 特例（最高6万円）は新生命保険料を支払った場合に適用されます。旧生命保険料だけの場合は最高5万円です。');
+    $('hj-out').textContent = L.join('\n');
+
+    var eq = num('hj-eq'), lt = num('hj-lt');
+    var e1 = Math.min(eq, 50000);
+    var e2 = lt <= 10000 ? lt : (lt <= 20000 ? Math.ceil(lt / 2) + 5000 : 15000);
+    var et = Math.min(e1 + e2, 50000), E = [];
+    E.push('令和8年分 地震保険料控除');
+    E.push('地震保険料分　　　　　' + yen(e1) + ' 円' + (eq > 50000 ? '（上限5万円）' : ''));
+    E.push('旧長期損害保険料分　　' + yen(e2) + ' 円' + (lt > 20000 ? '（上限1万5,000円）' : ''));
+    E.push('――――――――――');
+    E.push('地震保険料控除額　　　' + yen(et) + ' 円' + (e1 + e2 > 50000 ? '（合計 ' + yen(e1 + e2) + ' 円 → 上限5万円）' : ''));
+    $('hj-out2').textContent = E.join('\n');
+  }
+  ['hj-gn', 'hj-go', 'hj-km', 'hj-pn', 'hj-po', 'hj-u23', 'hj-eq', 'hj-lt'].forEach(function (id) {
+    $(id).addEventListener('input', run); $(id).addEventListener('change', run);
+  });
+  run();
+})();
+</script>
+
+<h2>使い方</h2>
+<p>保険会社から10月ごろに届く「控除証明書」を見ながら、区分ごとの年間の支払額を入力します。同じ区分の契約が複数あるときは、区分ごとに合計して入力してください。結果の控除額は、勤務先に出す「給与所得者の保険料控除申告書」の各欄の金額と同じ計算です。</p>
+<p>「新」は平成24年1月1日以後に結んだ契約、「旧」は平成23年12月31日以前に結んだ契約です。介護医療保険料には旧契約の区分はありません。</p>
+
+<h2>生命保険料控除の計算式（所得税）</h2>
+<table>
+  <tr><th>年間の支払保険料等</th><th>計算式Ⅰ（新契約）</th><th>計算式Ⅲ（旧契約）</th></tr>
+  <tr><td>新2万円以下／旧2万5,000円以下</td><td>全額</td><td>全額</td></tr>
+  <tr><td>新2万円超4万円以下／旧2万5,000円超5万円以下</td><td>× 1/2 ＋ 1万円</td><td>× 1/2 ＋ 1万2,500円</td></tr>
+  <tr><td>新4万円超8万円以下／旧5万円超10万円以下</td><td>× 1/4 ＋ 2万円</td><td>× 1/4 ＋ 2万5,000円</td></tr>
+  <tr><td>新8万円超／旧10万円超</td><td>一律 4万円</td><td>一律 5万円</td></tr>
+</table>
+<p>新契約と旧契約の両方がある区分は、「新だけ」「旧だけ」「新旧の合計（最高4万円）」のうち最も大きい金額になります。旧契約の支払額が6万円を超えると旧だけの方が有利です。3つの区分（一般・介護医療・個人年金）の合計は<strong>最高12万円</strong>です。計算で1円未満の端数が出たときは切り上げます。</p>
+
+<h2>令和8年分からの特例（23歳未満の扶養親族がいる場合）</h2>
+<p>令和8年度の税制改正で、年齢23歳未満の扶養親族がいる人の<strong>一般の生命保険料（新契約）</strong>の控除額は、令和8年分・令和9年分について次の計算式Ⅱで計算することになりました。</p>
+<table>
+  <tr><th>年間の新生命保険料</th><th>控除額（計算式Ⅱ）</th></tr>
+  <tr><td>3万円以下</td><td>全額</td></tr>
+  <tr><td>3万円超 6万円以下</td><td>× 1/2 ＋ 1万5,000円</td></tr>
+  <tr><td>6万円超 12万円以下</td><td>× 1/4 ＋ 3万円</td></tr>
+  <tr><td>12万円超</td><td>一律 6万円</td></tr>
+</table>
+<p>新生命保険料と旧生命保険料の両方を支払った場合の上限も、4万円から<strong>6万円</strong>になります。介護医療保険料・個人年金保険料の計算と、合計の上限12万円は変わりません。たとえば新生命保険料が年12万円なら、これまでの控除額4万円が6万円になります。</p>
+
+<h2>地震保険料控除の計算式</h2>
+<table>
+  <tr><th>区分</th><th>年間の支払保険料</th><th>控除額</th></tr>
+  <tr><td>地震保険料</td><td>5万円以下／5万円超</td><td>全額／一律5万円</td></tr>
+  <tr><td rowspan="3">旧長期損害保険料</td><td>1万円以下</td><td>全額</td></tr>
+  <tr><td>1万円超 2万円以下</td><td>× 1/2 ＋ 5,000円</td></tr>
+  <tr><td>2万円超</td><td>一律1万5,000円</td></tr>
+  <tr><td>両方ある場合</td><td>―</td><td>それぞれの合計（最高5万円）</td></tr>
+</table>
+
+<h2>よくある質問</h2>
+<details><summary>23歳未満の扶養親族の特例は、夫婦の両方が使える？</summary><p>使えます。国税庁の「年末調整のしかた」では、同じ世帯の夫婦の間に23歳未満の扶養親族である子が1人いるような場合、夫婦の両方がこの特例（計算式Ⅱと最高6万円）を受けられるとされています。</p></details>
+<details><summary>旧生命保険料だけを払っている場合も最高6万円になりますか？</summary><p>なりません。特例は新生命保険料に適用されるもので、旧生命保険料だけの場合は従来どおり計算式Ⅲで最高5万円です。新と旧の両方を払っている場合は、合計の上限が6万円になります。</p></details>
+<details><summary>剰余金や割戻金を受け取ったときは？</summary><p>区分ごとに、その年中に支払った保険料の合計額から、その区分に対応する剰余金・割戻金の合計額を差し引いた残りを入力してください。新生命保険料を旧生命保険料に含めるなど、区分を振り替えることはできません。</p></details>
+<details><summary>住民税の生命保険料控除も計算できますか？</summary><p>できません。このツールは所得税（年末調整・確定申告）の控除額だけを計算します。住民税は計算式と上限が別に定められています。</p></details>
+<details><summary>入力した金額は送信されますか？</summary><p>されません。計算はブラウザ内だけで行われます。</p></details>
+<p class="note">出典: 国税庁「令和8年分 年末調整のしかた」（昨年と比べて変わった点「年齢23歳未満の扶養親族を有する場合の生命保険料控除の特例」、保険料控除申告書の受理と内容の確認）、タックスアンサー No.1140 生命保険料控除・No.1145 地震保険料控除（令和8年4月1日現在法令等）。計算結果は参考値です。個別の判断は勤務先や所轄の税務署にご確認ください。</p>
+
+<div class="cta"><b>オフライン版（全16ツール・1ファイル）</b><br>
+社内ネットワークの外に出られないPCや、外部サイトの利用が制限された職場でも使えるよう、全ツールを1つのHTMLファイルにまとめました。ダブルクリックで開くだけ、インストール不要です。
+<a href="../offline/">詳しく見る →</a></div>
+<h2>関連ツール</h2>
+<div class="grid"><a class="tile" href="../kyuyo-shotoku/"><b>給与所得控除後の金額の計算（令和8年分・年末調整）</b><small>年収（給与の支払金額）から、令和8年分の給与所得控除後の金額（給与所得）を年末調整と同じ国税庁の表どおりに計算。基礎控除額と、家族の扶養・配偶者特別控除・特定親族特別控除の所得要件も判定。令和7年分にも切替可。</small></a><a class="tile" href="../gensen-choshu/"><b>源泉徴収税額の計算（報酬・料金）</b><small>フリーランスへの原稿料・デザイン料などの源泉徴収税額（10.21%／100万円超は20.42%）と、請求書の差引支払額を計算。手取り額からの逆算にも対応。</small></a><a class="tile" href="../wareki/"><b>和暦 ⇔ 西暦 変換・年齢早見表</b><small>令和・平成・昭和などの和暦と西暦を日付単位で相互変換。生年ごとの年齢・干支・学年がわかる早見表付き。</small></a></div>
+</main>
+<footer class="site"><div class="in">
+<p>🔒 このサイトのツールは、入力したデータをサーバーへ送信しません。変換・計算はすべてお使いのブラウザ内で行われます。</p>
+<p><a href="../about/">運営者情報</a>　<a href="../privacy/">プライバシーポリシー</a>　<a href="../tokushoho/">特定商取引法に基づく表記</a>　<a href="../offline/">オフライン版</a></p>
+<p>© 2026 ツールばこ — AI（Claude）が企画・開発・運営しています。</p>
+</div></footer>
+</body></html>
