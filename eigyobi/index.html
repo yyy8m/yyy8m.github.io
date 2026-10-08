@@ -13,7 +13,7 @@
 <meta property="og:site_name" content="ツールばこ">
 <meta name="twitter:card" content="summary">
 <link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="../assets/style.css?v=1.0">
+<link rel="stylesheet" href="../assets/style.css?v=1.1">
 <meta name="google-site-verification" content="ZP3pmCW9ENK-prdJQUPVRrxcxiVMD55Nnfu-uAUkeNs">
 <script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebApplication", "name": "営業日計算（日本の祝日対応）", "description": "日本の祝日（振替休日・国民の休日を含む）と土日を除いて営業日を計算する無料ツール。○営業日後・○営業日前の日付、2つの日付の間の営業日数を計算でき、年末年始休業や土曜営業、独自の休業日も設定可能。年ごとの祝日一覧も表示します。", "url": "https://yyy8m.github.io/eigyobi/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (Web browser)", "inLanguage": "ja", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "JPY"}}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "ツールばこ", "item": "https://yyy8m.github.io/"}, {"@type": "ListItem", "position": 2, "name": "営業日計算（日本の祝日対応）", "item": "https://yyy8m.github.io/eigyobi/"}]}]}</script>
 </head>
@@ -27,7 +27,7 @@
 <div class="crumb"><a href="../">ツールばこ</a> › 事務・経理</div>
 <h1>営業日計算（日本の祝日対応）</h1>
 <p class="lead">「5営業日後は何日？」「この期間の営業日数は？」を祝日・振替休日・年末年始込みで計算。祝日一覧も表示。<br><span class="badge">無料</span><span class="badge">登録不要</span><span class="badge">データ送信なし</span></p>
-<script src="../assets/common.js?v=1.0"></script>
+<script src="../assets/common.js?v=1.1"></script>
 <div class="card">
   <h3 style="margin-top:0">○営業日後（前）の日付</h3>
   <div class="row">
@@ -182,7 +182,7 @@
 <h2>計算のルール</h2>
 <ul>
   <li><strong>祝日</strong>：「国民の祝日に関する法律」に基づき、振替休日（日曜の祝日の翌平日）と国民の休日（祝日に挟まれた平日）を含めて自動計算します。2019年の即位関連の休日、2020・2021年のオリンピックに伴う祝日移動にも対応しています。</li>
-  <li><strong>春分の日・秋分の日</strong>：天文計算に基づく近似式で算出します。正式な日付は前年2月の官報で公表されます。</li>
+  <li><strong>春分の日・秋分の日</strong>：天文計算に基づく近似式で算出します。正式な日付は前年2月の官報で公表されます。2000〜2027年の祝日・休日は、内閣府が公表している「国民の祝日」一覧と日付がすべて一致することを確認しています。2028年以降は公表前の予測値です。</li>
   <li><strong>対象期間</strong>：2000年〜2099年。今後の法改正による祝日の変更は、反映されるまで考慮されません。</li>
 </ul>
 <h2>よくある質問</h2>
@@ -190,9 +190,9 @@
 <details><summary>銀行の休業日は？</summary><p>銀行は土日祝日と12月31日〜1月3日が休業日です（銀行法施行令）。「銀行休業日に合わせる」にチェックを入れ、「年末年始（12/29〜1/3）」のチェックを外すと銀行の営業日になります。</p></details>
 <details><summary>夏季休業やお盆休みを入れたい</summary><p>「独自の休業日」に日付を1行ずつ入力すると、営業日の計算から除外されます。</p></details>
 
-<div class="cta"><b>オフライン版（全16ツール・1ファイル）</b><br>
-社内ネットワークの外に出られないPCや、外部サイトの利用が制限された職場でも使えるよう、全ツールを1つのHTMLファイルにまとめました。ダブルクリックで開くだけ、インストール不要です。
-<a href="../offline/">詳しく見る →</a></div>
+<div class="cta"><b>オフライン版 v1.0（14ツール・1ファイル）</b><br>
+外部サイトの利用が制限された職場やネットワークにつながらないPCで使えるよう、ツールを1つのHTMLファイルにまとめた有料版です。このツールも収録しています。
+<a href="../offline/">収録内容と動作確認の範囲を見る →</a></div>
 <h2>関連ツール</h2>
 <div class="grid"><a class="tile" href="../wareki/"><b>和暦 ⇔ 西暦 変換・年齢早見表</b><small>令和・平成・昭和などの和暦と西暦を日付単位で相互変換。生年ごとの年齢・干支・学年がわかる早見表付き。</small></a><a class="tile" href="../shohizei/"><b>消費税計算（税込⇔税抜・インボイス制度対応）</b><small>税込⇔税抜の変換と、10%・8%が混在する請求書の税率ごとの消費税額を、インボイス制度の端数処理ルールで計算。</small></a><a class="tile" href="../kansuji/"><b>漢数字・大字（壱弐参）変換</b><small>数字を漢数字や大字（壱・弐・参・拾）に、漢数字を数字に相互変換。「金壱萬円也」の領収書表記やのし袋にも。</small></a></div>
 </main>

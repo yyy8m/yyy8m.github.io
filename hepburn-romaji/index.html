@@ -13,7 +13,7 @@
 <meta property="og:site_name" content="ツールばこ">
 <meta name="twitter:card" content="summary">
 <link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="../assets/style.css?v=1.0">
+<link rel="stylesheet" href="../assets/style.css?v=1.1">
 <meta name="google-site-verification" content="ZP3pmCW9ENK-prdJQUPVRrxcxiVMD55Nnfu-uAUkeNs">
 <script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebApplication", "name": "パスポート用 ヘボン式ローマ字変換", "description": "氏名のふりがなを入力するだけで、パスポートで使われるヘボン式ローマ字に変換する無料ツール。「ん」のB・M・P前のM表記、「っち」のTCH、長音（おお・おう→O、うう→U）の省略や「OH」表記に対応。入力はブラウザ内で処理され送信されません。", "url": "https://yyy8m.github.io/hepburn-romaji/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (Web browser)", "inLanguage": "ja", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "JPY"}}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "ツールばこ", "item": "https://yyy8m.github.io/"}, {"@type": "ListItem", "position": 2, "name": "パスポート用 ヘボン式ローマ字変換", "item": "https://yyy8m.github.io/hepburn-romaji/"}]}]}</script>
 </head>
@@ -27,7 +27,7 @@
 <div class="crumb"><a href="../">ツールばこ</a> › 手続き・書類</div>
 <h1>パスポート用 ヘボン式ローマ字変換</h1>
 <p class="lead">氏名のふりがなを、旅券（パスポート）のヘボン式ローマ字に変換。ん→M、っ→TCH、長音の省略、OH表記まで外務省のルールで。<br><span class="badge">無料</span><span class="badge">登録不要</span><span class="badge">データ送信なし</span></p>
-<script src="../assets/common.js?v=1.0"></script>
+<script src="../assets/common.js?v=1.1"></script>
 <div class="card">
   <div class="row">
     <div><label for="hb-sei">姓（ふりがな）</label><input type="text" id="hb-sei" value="さとう" autocomplete="off"></div>
@@ -51,7 +51,7 @@
     'にゃ':'NYA','にゅ':'NYU','にょ':'NYO','ひゃ':'HYA','ひゅ':'HYU','ひょ':'HYO','みゃ':'MYA','みゅ':'MYU','みょ':'MYO',
     'りゃ':'RYA','りゅ':'RYU','りょ':'RYO','ぎゃ':'GYA','ぎゅ':'GYU','ぎょ':'GYO','じゃ':'JA','じゅ':'JU','じょ':'JO',
     'ぢゃ':'JA','ぢゅ':'JU','ぢょ':'JO','びゃ':'BYA','びゅ':'BYU','びょ':'BYO','ぴゃ':'PYA','ぴゅ':'PYU','ぴょ':'PYO',
-    'しぇ':'SHE','ちぇ':'CHE','じぇ':'JE','ふぁ':'FA','ふぃ':'FI','ふぇ':'FE','ふぉ':'FO','てぃ':'TEI','でぃ':'DEI','う゛':'BU',
+    'しぇ':'SHE','ちぇ':'CHIE','じぇ':'JIE','ふぁ':'FUA','ふぃ':'FUI','ふぇ':'FUE','ふぉ':'FUO','てぃ':'TEI','でぃ':'DEI','でゅ':'DEYU','う゛':'BU',
     'あ':'A','い':'I','う':'U','え':'E','お':'O','か':'KA','き':'KI','く':'KU','け':'KE','こ':'KO',
     'さ':'SA','し':'SHI','す':'SU','せ':'SE','そ':'SO','た':'TA','ち':'CHI','つ':'TSU','て':'TE','と':'TO',
     'な':'NA','に':'NI','ぬ':'NU','ね':'NE','の':'NO','は':'HA','ひ':'HI','ふ':'FU','へ':'HE','ほ':'HO',
@@ -69,7 +69,11 @@
     var units = [], notes = [], i = 0;
     while (i < s.length) {
       var two = s.substr(i, 2), one = s[i];
-      if (T[two]) { units.push({ k: two, r: T[two] }); i += 2; continue; }
+      if (T[two]) {
+        units.push({ k: two, r: T[two] }); i += 2;
+        if (two === 'しぇ') notes.push('「しぇ」は旅券のヘボン式の表に記載がないため SHE としました。申請窓口で確認してください');
+        continue;
+      }
       if (one === 'ん' || one === 'っ' || one === 'ー') { units.push({ k: one, r: '' }); i++; continue; }
       if (T[one]) { units.push({ k: one, r: T[one] }); i++; continue; }
       if (/[A-Za-z]/.test(one)) { units.push({ k: one, r: one.toUpperCase() }); i++; continue; }
@@ -93,12 +97,18 @@
       if (u.k === 'ー') { continue; }
       /* 長音: お段+う/お → 省略 or H、う段+う → 省略 */
       if ((u.k === 'う' || u.k === 'お') && prev === 'O' && j > 0 && units[j - 1].r.slice(-1) === 'O' && units[j - 1].k !== 'ん') {
+        /* 末尾の長音の「お」は O を書く（例: みそのお → MISONOO）。末尾以外の「お」と、長音の「う」は書かない */
+        if (u.k === 'お' && j === units.length - 1 && mode !== 'oh') {
+          out += 'O';
+          notes.push('末尾の長音「' + units[j - 1].k + u.k + '」は O を表記しました');
+          continue;
+        }
         if (mode === 'oh') out += 'H';
-        notes.push('「' + units[j - 1].k + u.k + '」を長音として扱いました');
+        notes.push('「' + units[j - 1].k + u.k + '」を長音として扱いました（漢字の区切りで長音にならない読みは、窓口で確認してください）');
         continue;
       }
       if (u.k === 'う' && prev === 'U' && j > 0 && units[j - 1].r.slice(-1) === 'U') {
-        notes.push('「' + units[j - 1].k + u.k + '」を長音として扱いました');
+        notes.push('「' + units[j - 1].k + u.k + '」を長音として扱いました（松浦 MATSUURA のように長音でない読みは、窓口で確認してください）');
         continue;
       }
       out += u.r;
@@ -130,8 +140,11 @@
   <tr><td>「ん」は N。ただし B・M・P の前では M</td><td>なんば → NAMBA、ほんま → HOMMA、しんいち → SHINICHI</td></tr>
   <tr><td>「っ」は次の子音を重ねる。「っち」は TCH</td><td>はっとり → HATTORI、はっちょう → HATCHO</td></tr>
   <tr><td>長音（おお・おう・うう）は表記しない</td><td>おおの → ONO、さとう → SATO、ゆうき → YUKI</td></tr>
+  <tr><td>ただし名前の<strong>末尾</strong>の長音「お」は O を書く</td><td>みそのお（御園生）→ MISONOO</td></tr>
   <tr><td>「ん」の後に母音が続いてもアポストロフィは付けない</td><td>じゅんいち → JUNICHI</td></tr>
+  <tr><td>外国式氏名の音</td><td>ジェ JIE、チェ CHIE、ティ TEI、ディ DEI、デュ DEYU、ファ FUA、フィ FUI、フェ FUE、フォ FUO、ヴ BU、ヴァ BUA（BA も可）</td></tr>
 </table>
+<p class="note">「まつうら（松浦）→ MATSUURA」「こうちわ（小団扇）→ KOUCHIWA」のように、漢字の区切りで長音にならない読みは、ふりがなだけでは判断できません。補足欄に「長音として扱いました」と出た場合は、申請窓口の案内で確認してください。</p>
 
 <h2>「OH」表記（非ヘボン式）について</h2>
 <p>長音の「お」を <code>OH</code> と表記する（例：大野 → OHNO、佐藤 → SATOH）ことは、申請すれば認められる<strong>非ヘボン式</strong>の表記です。一度パスポートで採用した表記は、原則として以後も同じものを使い続ける必要があります。クレジットカードや航空券の名義とそろえてください。</p>
@@ -141,11 +154,11 @@
 <details><summary>「いい」「えい」も長音として省略されますか？</summary><p>いいえ。パスポートのルールで省略するのは「おお」「おう」「うう」です。「けいこ」は KEIKO、「にいがた」は NIIGATA のままです。</p></details>
 <details><summary>単語の区切りで「おう」が長音にならない名前は？</summary><p>「たかおうじ」のように、漢字の区切りで「お」と「う」が別の字に属する場合、実際の申請では長音として扱われないことがあります。このツールは読みだけで判断するため、補足欄に「長音として扱いました」と表示された箇所は、申請時に都道府県の旅券窓口の案内で確認してください。</p></details>
 <details><summary>入力した名前は保存されますか？</summary><p>保存も送信もしません。変換はブラウザ内だけで行われます。</p></details>
-<p class="note">※ このツールは外務省が公表しているヘボン式ローマ字綴方の一般的なルールに基づく参考表示です。最終的な表記は申請窓口の判断に従ってください。</p>
+<p class="note">※ このツールは、都道府県の旅券窓口が公表しているヘボン式ローマ字の表（静岡県「ヘボン式ローマ字の書き方」、神奈川県・大阪府の案内）に基づく参考表示です。最終的な表記は申請窓口の判断に従ってください。</p>
 
-<div class="cta"><b>オフライン版（全16ツール・1ファイル）</b><br>
-社内ネットワークの外に出られないPCや、外部サイトの利用が制限された職場でも使えるよう、全ツールを1つのHTMLファイルにまとめました。ダブルクリックで開くだけ、インストール不要です。
-<a href="../offline/">詳しく見る →</a></div>
+<div class="cta"><b>オフライン版 v1.0（14ツール・1ファイル）</b><br>
+外部サイトの利用が制限された職場やネットワークにつながらないPCで使えるよう、ツールを1つのHTMLファイルにまとめた有料版です。このツールも収録しています。
+<a href="../offline/">収録内容と動作確認の範囲を見る →</a></div>
 <h2>関連ツール</h2>
 <div class="grid"><a class="tile" href="../hira-kata/"><b>ひらがな ⇔ カタカナ 変換</b><small>ひらがなをカタカナに、カタカナをひらがなに一括変換。半角カナ（ｶﾀｶﾅ）も自動で処理します。</small></a><a class="tile" href="../zenkaku-hankaku/"><b>全角・半角 変換ツール</b><small>英数字・カタカナ・記号・スペースを、種類ごとに選んで全角⇔半角に一括変換。住所や名簿の表記ゆれ統一に。</small></a><a class="tile" href="../wareki/"><b>和暦 ⇔ 西暦 変換・年齢早見表</b><small>令和・平成・昭和などの和暦と西暦を日付単位で相互変換。生年ごとの年齢・干支・学年がわかる早見表付き。</small></a></div>
 </main>

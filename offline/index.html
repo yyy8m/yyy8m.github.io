@@ -4,16 +4,16 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>ツールばこ オフライン版 | ツールばこ</title>
-<meta name="description" content="全ツールを1つのHTMLファイルにまとめたオフライン版。通信ゼロで、社内ネットワークや閉域網でも使えます。">
+<meta name="description" content="ツールを1つのHTMLファイルにまとめた有料のオフライン版。販売中の版の収録内容、動作確認の範囲、既知の不具合。">
 <link rel="canonical" href="https://yyy8m.github.io/offline/">
 <meta property="og:type" content="website">
 <meta property="og:title" content="ツールばこ オフライン版 | ツールばこ">
-<meta property="og:description" content="全ツールを1つのHTMLファイルにまとめたオフライン版。通信ゼロで、社内ネットワークや閉域網でも使えます。">
+<meta property="og:description" content="ツールを1つのHTMLファイルにまとめた有料のオフライン版。販売中の版の収録内容、動作確認の範囲、既知の不具合。">
 <meta property="og:url" content="https://yyy8m.github.io/offline/">
 <meta property="og:site_name" content="ツールばこ">
 <meta name="twitter:card" content="summary">
 <link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="../assets/style.css?v=1.0">
+<link rel="stylesheet" href="../assets/style.css?v=1.1">
 <meta name="google-site-verification" content="ZP3pmCW9ENK-prdJQUPVRrxcxiVMD55Nnfu-uAUkeNs">
 
 </head>
@@ -25,7 +25,7 @@
 <script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "407423b538474caea789faf109651084"}'></script>
 <main>
 <h1>ツールばこ オフライン版</h1>
-<p class="lead">このサイトの全16ツールを、1つのHTMLファイルにまとめたオフライン版です。</p>
+<p class="lead">Web版のツールを1つのHTMLファイルにまとめた有料版です。販売中の版は <strong>v1.0（14ツール）</strong>です。</p>
 <a class="btn" href="https://toolbako.gumroad.com/l/toolbako-offline" rel="noopener">オフライン版を購入する（980円）</a>
 <h2>こんな職場に</h2>
 <ul>
@@ -42,8 +42,17 @@
 <li><strong>30日間返金保証</strong>：職場の環境で動かなかった場合など、購入から30日以内なら理由を問わず返金します。</li>
 </ul>
 <h2>収録ツール（v1.0）</h2>
-<ol><li>振込用 半角カナ変換（口座名義・全銀協規定文字）</li><li>パスポート用 ヘボン式ローマ字変換</li><li>CSVの文字化けを直す 文字コード変換（UTF-8 ⇔ Shift_JIS）</li><li>全角・半角 変換ツール</li><li>ひらがな ⇔ カタカナ 変換</li><li>文字数カウント（バイト数・原稿用紙・X換算）</li><li>和暦 ⇔ 西暦 変換・年齢早見表</li><li>営業日計算（日本の祝日対応）</li><li>日数計算（日付の差・○日後の日付）</li><li>消費税計算（税込⇔税抜・インボイス制度対応）</li><li>源泉徴収税額の計算（報酬・料金）</li><li>給与所得控除後の金額の計算（令和8年分・年末調整）</li><li>生命保険料控除・地震保険料控除の計算（令和8年分・年末調整）</li><li>機種依存文字チェッカー</li><li>漢数字・大字（壱弐参）変換</li><li>JSON 整形・圧縮・検証</li></ol>
-<p class="note">※ Web版のツールはこれからも無料で使えます。オフライン版は、上記のような環境で使いたい方のための有料版です。売上はツールの追加と運営費に充てます。</p>
+<ol><li>振込用 半角カナ変換（口座名義・全銀協規定文字）</li><li>パスポート用 ヘボン式ローマ字変換</li><li>CSVの文字化けを直す 文字コード変換（UTF-8 ⇔ Shift_JIS）</li><li>全角・半角 変換ツール</li><li>ひらがな ⇔ カタカナ 変換</li><li>文字数カウント（バイト数・原稿用紙・X換算）</li><li>和暦 ⇔ 西暦 変換・年齢早見表</li><li>営業日計算（日本の祝日対応）</li><li>日数計算（日付の差・○日後の日付）</li><li>消費税計算（税込⇔税抜・インボイス制度対応）</li><li>源泉徴収税額の計算（報酬・料金）</li><li>機種依存文字チェッカー</li><li>漢数字・大字（壱弐参）変換</li><li>JSON 整形・圧縮・検証</li></ol>
+<p>次のツールは Web 版だけで公開しており、販売中の版には収録されていません: 給与所得控除後の金額の計算（令和8年分・年末調整）、生命保険料控除・地震保険料控除の計算（令和8年分・年末調整）</p>
+<h2>動作確認の範囲</h2>
+<ul>
+<li>動作を確認した環境: Windows 11 上の Chromium 系ブラウザ（Chrome 152 相当）。ファイルを直接開いた状態（file://）で、各ツールの基本動作を確認しています。Edge・Safari・Firefox では未確認です。</li>
+<li>外部通信: ファイル内に外部のURLはなく、通信を禁止する設定（Content-Security-Policy: connect-src 'none'）を入れています。開いたときに外部から読み込まれるリソースが0件であることを確認しています。</li>
+<li>振込カナ・Shift_JIS変換・源泉徴収・消費税・祝日・パスポートのローマ字は、公的機関の資料（東京都・大阪市の法人略語一覧、内閣府の祝日一覧、国税庁のタックスアンサー、都道府県の旅券窓口の表など）から作ったテストデータで確認しています。</li>
+<li>職場で外部製のHTMLファイルを使ってよいかは、勤務先の規程に従ってください。中身はテキストのHTMLなので、情報システム担当の方がメモ帳などで確認できます。</li>
+</ul>
+<h2>販売中の版（v1.0）の既知の不具合</h2><p>次の点は Web 版では修正済みですが、販売中のファイルにはまだ残っています。修正版の配布準備ができしだい、このページでお知らせします。</p><ul><li>振込カナ: 社会医療法人・地方独立行政法人の略語が誤って付きます（カナで入力すると警告なしで「ｼﾔｶｲ(ｲ」「ﾁﾎｳ(ﾄﾞｸ」、漢字では「使えない文字」の警告付きで「社会(ｲ」など）。弁護士法人・司法書士法人・行政書士法人・社会保険労務士法人・農事組合法人・管理組合法人・更生保護法人・国立/公立大学法人の略語に対応していません（漢字で入力した場合は「使えない文字」と表示されます）。</li><li>ローマ字: 外国式氏名の音がパスポートの表と異なります（ファ→FA〈正しくは FUA〉、フィ・フェ・フォ、チェ→CHE〈CHIE〉、ジェ→JE〈JIE〉）。名前の末尾の長音「お」を省略します（みそのお→MISONO〈正しくは MISONOO〉）。</li><li>CSV: Mac などで入力した「〜」（U+301C）は Shift_JIS で保存すると「？」になります（画面に警告は出ます）。</li><li>源泉徴収: よくある質問の「納期の特例で半年ごと」「2038年以降は10%」の説明は不正確です（原稿料などに納期の特例は使えません。復興特別所得税の期間は令和29年まで延長）。</li></ul>
+<p class="note">※ Web版のツールはこれからも無料で使えます。購入から30日以内なら理由を問わず返金します。</p>
 
 </main>
 <footer class="site"><div class="in">

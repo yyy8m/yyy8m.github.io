@@ -13,7 +13,7 @@
 <meta property="og:site_name" content="ツールばこ">
 <meta name="twitter:card" content="summary">
 <link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="../assets/style.css?v=1.0">
+<link rel="stylesheet" href="../assets/style.css?v=1.1">
 <meta name="google-site-verification" content="ZP3pmCW9ENK-prdJQUPVRrxcxiVMD55Nnfu-uAUkeNs">
 <script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebApplication", "name": "源泉徴収税額の計算（報酬・料金）", "description": "報酬・料金（原稿料、デザイン料、講演料など）の源泉徴収税額を計算する無料ツール。100万円以下は10.21%、超える部分は20.42%で計算し、消費税を区分した請求書の差引支払額（振込額）を表示します。希望の手取り額から報酬額を逆算することもできます。", "url": "https://yyy8m.github.io/gensen-choshu/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (Web browser)", "inLanguage": "ja", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "JPY"}}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "ツールばこ", "item": "https://yyy8m.github.io/"}, {"@type": "ListItem", "position": 2, "name": "源泉徴収税額の計算（報酬・料金）", "item": "https://yyy8m.github.io/gensen-choshu/"}]}]}</script>
 </head>
@@ -27,7 +27,7 @@
 <div class="crumb"><a href="../">ツールばこ</a> › 事務・経理</div>
 <h1>源泉徴収税額の計算（報酬・料金）</h1>
 <p class="lead">フリーランスへの原稿料・デザイン料などの源泉徴収税額（10.21%／100万円超は20.42%）と、請求書の差引支払額を計算。手取り額からの逆算にも対応。<br><span class="badge">無料</span><span class="badge">登録不要</span><span class="badge">データ送信なし</span></p>
-<script src="../assets/common.js?v=1.0"></script>
+<script src="../assets/common.js?v=1.1"></script>
 <div class="card">
   <h3 style="margin-top:0">報酬額から計算（請求書の作成）</h3>
   <div class="row">
@@ -111,14 +111,15 @@
 <p>源泉徴収をするのは、報酬を<strong>支払う側が法人や給与を支払っている個人事業主</strong>の場合です。個人に支払う報酬が対象で、法人への支払いは原則として対象外です（馬主への賞金など一部を除く）。</p>
 
 <h2>よくある質問</h2>
-<details><summary>いつまで 10.21% なの？</summary><p>復興特別所得税は2037年（令和19年）12月31日までの支払いに適用されます。2038年以降は制度改正がなければ 10% になります。</p></details>
-<details><summary>源泉徴収した税金はいつ納める？</summary><p>原則として、支払った月の翌月10日までに税務署へ納付します（納期の特例の承認を受けていれば半年ごと）。</p></details>
+<details><summary>いつまで 10.21% なの？</summary><p>令和8年度の税制改正で、令和9年（2027年）1月1日から防衛特別所得税が加わり、復興特別所得税の課税期間は令和29年（2047年）12月31日までに延長されました（国税庁「令和9年分 源泉徴収税額表」）。報酬・料金の源泉徴収で使う合計の税率が令和9年以後どうなるかは、国税庁の報酬・料金向けの資料でまだ確認できていないため、このツールは 10.21%・20.42% で計算しています。令和9年以後の支払いは、国税庁の最新の資料で確認してください。</p></details>
+<details><summary>源泉徴収した税金はいつ納める？</summary><p>原稿料・デザイン料・講演料などは、支払った月の翌月10日までに納付します。これらには納期の特例（年2回納付）は使えません。弁護士・税理士・司法書士などへの報酬は、納期の特例の承認を受けていれば、1〜6月分を7月10日、7〜12月分を翌年1月20日までに納付できます（国税庁 タックスアンサー No.2795・No.2505・No.2801）。</p></details>
+<details><summary>計算方法が違う報酬はある？</summary><p>あります。このツールは「100万円以下は10.21%、超える部分は20.42%」で計算する報酬（原稿料・デザイン料・講演料、弁護士・税理士への報酬など）専用です。司法書士・土地家屋調査士・海事代理士への報酬は、1回の支払額から1万円を引いた残りに10.21%をかけます（No.2801）。外交員・ホステスなどへの報酬、診療報酬なども計算方法が異なり、このツールでは計算できません。</p></details>
 <details><summary>入力した金額は送信されますか？</summary><p>されません。計算はブラウザ内だけで行われます。</p></details>
 <p class="note">※ 計算結果は参考値です。個別の判断は税理士や所轄の税務署にご確認ください。</p>
 
-<div class="cta"><b>オフライン版（全16ツール・1ファイル）</b><br>
-社内ネットワークの外に出られないPCや、外部サイトの利用が制限された職場でも使えるよう、全ツールを1つのHTMLファイルにまとめました。ダブルクリックで開くだけ、インストール不要です。
-<a href="../offline/">詳しく見る →</a></div>
+<div class="cta"><b>オフライン版 v1.0（14ツール・1ファイル）</b><br>
+外部サイトの利用が制限された職場やネットワークにつながらないPCで使えるよう、ツールを1つのHTMLファイルにまとめた有料版です。このツールも収録しています。
+<a href="../offline/">収録内容と動作確認の範囲を見る →</a></div>
 <h2>関連ツール</h2>
 <div class="grid"><a class="tile" href="../shohizei/"><b>消費税計算（税込⇔税抜・インボイス制度対応）</b><small>税込⇔税抜の変換と、10%・8%が混在する請求書の税率ごとの消費税額を、インボイス制度の端数処理ルールで計算。</small></a><a class="tile" href="../zengin-kana/"><b>振込用 半角カナ変換（口座名義・全銀協規定文字）</b><small>振込先の口座名義を、銀行で使える半角カナに一発変換。株式会社→ｶ) などの法人略語、小さい文字・長音の置換、使えない文字の検出まで。</small></a><a class="tile" href="../eigyobi/"><b>営業日計算（日本の祝日対応）</b><small>「5営業日後は何日？」「この期間の営業日数は？」を祝日・振替休日・年末年始込みで計算。祝日一覧も表示。</small></a></div>
 </main>

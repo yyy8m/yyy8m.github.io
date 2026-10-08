@@ -13,7 +13,7 @@
 <meta property="og:site_name" content="ツールばこ">
 <meta name="twitter:card" content="summary">
 <link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="../assets/style.css?v=1.0">
+<link rel="stylesheet" href="../assets/style.css?v=1.1">
 <meta name="google-site-verification" content="ZP3pmCW9ENK-prdJQUPVRrxcxiVMD55Nnfu-uAUkeNs">
 <script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebApplication", "name": "CSVの文字化けを直す 文字コード変換（UTF-8 ⇔ Shift_JIS）", "description": "Excelで文字化けするCSVファイルを、BOM付きUTF-8またはShift_JIS（CP932）に変換してダウンロードできる無料ツール。文字コードの自動判定、改行コード（CRLF/LF）の変換、Shift_JISで表せない文字の検出に対応。ファイルはブラウザ内で処理され、サーバーへ送信されません。", "url": "https://yyy8m.github.io/csv-mojibake/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (Web browser)", "inLanguage": "ja", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "JPY"}}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "ツールばこ", "item": "https://yyy8m.github.io/"}, {"@type": "ListItem", "position": 2, "name": "CSVの文字化けを直す 文字コード変換（UTF-8 ⇔ Shift_JIS）", "item": "https://yyy8m.github.io/csv-mojibake/"}]}]}</script>
 </head>
@@ -27,7 +27,7 @@
 <div class="crumb"><a href="../">ツールばこ</a> › データ・開発</div>
 <h1>CSVの文字化けを直す 文字コード変換（UTF-8 ⇔ Shift_JIS）</h1>
 <p class="lead">Excelで開くと文字化けするCSVを、BOM付きUTF-8やShift_JISに変換してダウンロード。ファイルはアップロードされません。<br><span class="badge">無料</span><span class="badge">登録不要</span><span class="badge">データ送信なし</span></p>
-<script src="../assets/common.js?v=1.0"></script>
+<script src="../assets/common.js?v=1.1"></script>
 <div class="card">
   <div class="drop" id="cm-drop">
     <p><strong>CSV・テキストファイルをここにドロップ</strong><br>または <input type="file" id="cm-file" accept=".csv,.txt,.tsv,text/*"></p>
@@ -125,6 +125,11 @@
           uniq.slice(0, 40).map(function (c) { return '<mark class="bad">' + TB.esc(c) + '</mark>'; }).join(' ') +
           '<br>絵文字・一部の旧字体（𠮷 など）が該当します。元の文字を残したい場合は「UTF-8（BOM付き）」を選んでください。</p>';
       }
+      if (r.subst.length) {
+        var su = []; r.subst.forEach(function (b) { var k = b.ch + '→' + b.to; if (su.indexOf(k) < 0) su.push(k); });
+        warn += '<p class="note">Windows の Shift_JIS に合わせて ' + r.subst.length + ' 箇所を置き換えました: ' + su.map(TB.esc).join('、') +
+          '（Mac などで入力した「〜」は、Windows では「～」として扱われます）</p>';
+      }
     } else {
       var u = new TextEncoder().encode(text);
       if (enc === 'utf8bom') { bytes = new Uint8Array(u.length + 3); bytes.set([0xEF, 0xBB, 0xBF]); bytes.set(u, 3); suffix = '_utf8bom'; }
@@ -133,7 +138,7 @@
     var dot = baseName.lastIndexOf('.');
     var name = dot > 0 ? baseName.slice(0, dot) + suffix + baseName.slice(dot) : baseName + suffix + '.csv';
     TB.download(new Blob([bytes], { type: 'text/csv' }), name);
-    $('cm-warn').innerHTML = warn || '<p class="ok">変換しました: ' + TB.esc(name) + '</p>';
+    $('cm-warn').innerHTML = '<p class="ok">変換しました: ' + TB.esc(name) + '</p>' + warn;
   }
 
   $('cm-file').addEventListener('change', function () { if (this.files[0]) load(this.files[0]); });
@@ -163,9 +168,9 @@
 <details><summary>文字コードの自動判定が外れることはありますか？</summary><p>UTF-8 として正しく読めるかを先に確認し、読めなければ Shift_JIS と判定します。ごく短いファイルなどでは誤判定がありえるため、プレビューで文字化けしていないか確認してから変換してください。</p></details>
 <details><summary>大きなファイルでも使えますか？</summary><p>数十MB程度までなら、一般的なパソコンで数秒以内に変換できます。</p></details>
 
-<div class="cta"><b>オフライン版（全16ツール・1ファイル）</b><br>
-社内ネットワークの外に出られないPCや、外部サイトの利用が制限された職場でも使えるよう、全ツールを1つのHTMLファイルにまとめました。ダブルクリックで開くだけ、インストール不要です。
-<a href="../offline/">詳しく見る →</a></div>
+<div class="cta"><b>オフライン版 v1.0（14ツール・1ファイル）</b><br>
+外部サイトの利用が制限された職場やネットワークにつながらないPCで使えるよう、ツールを1つのHTMLファイルにまとめた有料版です。このツールも収録しています。
+<a href="../offline/">収録内容と動作確認の範囲を見る →</a></div>
 <h2>関連ツール</h2>
 <div class="grid"><a class="tile" href="../izon-moji/"><b>機種依存文字チェッカー</b><small>①・㈱・㍉・髙・﨑・絵文字など、システムやメールで化けやすい文字を色付きで検出し、ワンクリックで安全な文字に置換。</small></a><a class="tile" href="../json-format/"><b>JSON 整形・圧縮・検証</b><small>JSONを見やすく整形・1行に圧縮。構文エラーは行と列を表示。キーのソートや日本語のエスケープ解除にも対応。</small></a><a class="tile" href="../zenkaku-hankaku/"><b>全角・半角 変換ツール</b><small>英数字・カタカナ・記号・スペースを、種類ごとに選んで全角⇔半角に一括変換。住所や名簿の表記ゆれ統一に。</small></a></div>
 </main>

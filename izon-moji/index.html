@@ -13,7 +13,7 @@
 <meta property="og:site_name" content="ツールばこ">
 <meta name="twitter:card" content="summary">
 <link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="../assets/style.css?v=1.0">
+<link rel="stylesheet" href="../assets/style.css?v=1.1">
 <meta name="google-site-verification" content="ZP3pmCW9ENK-prdJQUPVRrxcxiVMD55Nnfu-uAUkeNs">
 <script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebApplication", "name": "機種依存文字チェッカー", "description": "文章に含まれる機種依存文字（環境依存文字）を検出・置換する無料ツール。丸数字①・ローマ数字Ⅰ・㈱などのNEC特殊文字、髙・﨑などのIBM拡張文字、Shift_JISに存在しない絵文字や𠮷、半角カナ、波ダッシュ問題の「～」を色分けして表示し、(1)・(株)・高 などに一括置換できます。", "url": "https://yyy8m.github.io/izon-moji/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (Web browser)", "inLanguage": "ja", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "JPY"}}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "ツールばこ", "item": "https://yyy8m.github.io/"}, {"@type": "ListItem", "position": 2, "name": "機種依存文字チェッカー", "item": "https://yyy8m.github.io/izon-moji/"}]}]}</script>
 </head>
@@ -27,7 +27,7 @@
 <div class="crumb"><a href="../">ツールばこ</a> › 文字・テキスト</div>
 <h1>機種依存文字チェッカー</h1>
 <p class="lead">①・㈱・㍉・髙・﨑・絵文字など、システムやメールで化けやすい文字を色付きで検出し、ワンクリックで安全な文字に置換。<br><span class="badge">無料</span><span class="badge">登録不要</span><span class="badge">データ送信なし</span></p>
-<script src="../assets/common.js?v=1.0"></script>
+<script src="../assets/common.js?v=1.1"></script>
 <div class="card">
   <label for="im-in">チェックしたいテキスト</label>
   <textarea id="im-in">㈱ツールばこ　髙橋様　①ご注文　Ⅱ期　10㌔　〜お届けまで3日〜 🎉</textarea>
@@ -114,9 +114,9 @@
 <details><summary>「〜」が検出されるのはなぜ？</summary><p>見た目がほぼ同じ「〜」(波ダッシュ U+301C) と「～」(全角チルダ U+FF5E) は別の文字です。Windows の Shift_JIS（CP932）で使えるのは「～」の方で、Mac やスマホで入力した「〜」は古いシステムに送ると「?」に化けることがあります。これが有名な「波ダッシュ問題」です。</p></details>
 <details><summary>入力した文章は送信されますか？</summary><p>されません。判定はブラウザ内の Shift_JIS 変換表を使って行っています。</p></details>
 
-<div class="cta"><b>オフライン版（全16ツール・1ファイル）</b><br>
-社内ネットワークの外に出られないPCや、外部サイトの利用が制限された職場でも使えるよう、全ツールを1つのHTMLファイルにまとめました。ダブルクリックで開くだけ、インストール不要です。
-<a href="../offline/">詳しく見る →</a></div>
+<div class="cta"><b>オフライン版 v1.0（14ツール・1ファイル）</b><br>
+外部サイトの利用が制限された職場やネットワークにつながらないPCで使えるよう、ツールを1つのHTMLファイルにまとめた有料版です。このツールも収録しています。
+<a href="../offline/">収録内容と動作確認の範囲を見る →</a></div>
 <h2>関連ツール</h2>
 <div class="grid"><a class="tile" href="../csv-mojibake/"><b>CSVの文字化けを直す 文字コード変換（UTF-8 ⇔ Shift_JIS）</b><small>Excelで開くと文字化けするCSVを、BOM付きUTF-8やShift_JISに変換してダウンロード。ファイルはアップロードされません。</small></a><a class="tile" href="../zenkaku-hankaku/"><b>全角・半角 変換ツール</b><small>英数字・カタカナ・記号・スペースを、種類ごとに選んで全角⇔半角に一括変換。住所や名簿の表記ゆれ統一に。</small></a><a class="tile" href="../moji-count/"><b>文字数カウント（バイト数・原稿用紙・X換算）</b><small>文字数・空白を除いた文字数・行数に加え、Shift_JIS／UTF-8のバイト数、原稿用紙の枚数、X（旧Twitter）の文字数まで一度に表示。</small></a></div>
 </main>

@@ -127,16 +127,20 @@ var TB = (function () {
     sjisMap.set('−', sjisMap.get('－'));
     return sjisMap;
   };
-  /* 戻り値: {bytes: Uint8Array, bad: [{ch, index}]} */
+  /* Mac などで入力される文字のうち、Windows の Shift_JIS（CP932）では別の文字に対応するもの。
+     Windows（Python の cp932 も同じ）と同様に置き換え、置き換えたことを subst で返す。 */
+  var COMPAT = { '〜': '～', '‖': '∥', '¢': '￠', '£': '￡', '¬': '￢' };
+  /* 戻り値: {bytes: Uint8Array, bad: [{ch, index}], subst: [{ch, to, index}]} */
   TB.encodeSjis = function (s, replacement) {
-    var map = TB.sjisTable(), out = [], bad = [], idx = 0;
+    var map = TB.sjisTable(), out = [], bad = [], subst = [], idx = 0;
     var rep = replacement === undefined ? [0x3F] : map.get(replacement) || [0x3F];
     for (var ch of s) {
       var b = map.get(ch);
+      if (!b && COMPAT[ch]) { b = map.get(COMPAT[ch]); subst.push({ ch: ch, to: COMPAT[ch], index: idx }); }
       if (b) { out.push.apply(out, b); } else { bad.push({ ch: ch, index: idx }); out.push.apply(out, rep); }
       idx++;
     }
-    return { bytes: new Uint8Array(out), bad: bad };
+    return { bytes: new Uint8Array(out), bad: bad, subst: subst };
   };
   TB.sjisBytesOf = function (ch) { return TB.sjisTable().get(ch) || null; };
 

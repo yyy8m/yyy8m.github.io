@@ -13,7 +13,7 @@
 <meta property="og:site_name" content="ツールばこ">
 <meta name="twitter:card" content="summary">
 <link rel="icon" href="../assets/icon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="../assets/style.css?v=1.0">
+<link rel="stylesheet" href="../assets/style.css?v=1.1">
 <meta name="google-site-verification" content="ZP3pmCW9ENK-prdJQUPVRrxcxiVMD55Nnfu-uAUkeNs">
 <script type="application/ld+json">{"@context": "https://schema.org", "@graph": [{"@type": "WebApplication", "name": "振込用 半角カナ変換（口座名義・全銀協規定文字）", "description": "口座名義（受取人名）を全銀協規定文字の半角カナへ変換する無料ツール。ひらがな・全角カナ・英小文字を変換し、ャ→ﾔ、ー→- の置換、株式会社→ｶ)・(ｶ などの法人略語、使えない文字の検出、30桁チェックに対応。入力はブラウザ内だけで処理します。", "url": "https://yyy8m.github.io/zengin-kana/", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (Web browser)", "inLanguage": "ja", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "JPY"}}, {"@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "ツールばこ", "item": "https://yyy8m.github.io/"}, {"@type": "ListItem", "position": 2, "name": "振込用 半角カナ変換（口座名義・全銀協規定文字）", "item": "https://yyy8m.github.io/zengin-kana/"}]}]}</script>
 </head>
@@ -27,7 +27,7 @@
 <div class="crumb"><a href="../">ツールばこ</a> › 事務・経理</div>
 <h1>振込用 半角カナ変換（口座名義・全銀協規定文字）</h1>
 <p class="lead">振込先の口座名義を、銀行で使える半角カナに一発変換。株式会社→ｶ) などの法人略語、小さい文字・長音の置換、使えない文字の検出まで。<br><span class="badge">無料</span><span class="badge">登録不要</span><span class="badge">データ送信なし</span></p>
-<script src="../assets/common.js?v=1.0"></script>
+<script src="../assets/common.js?v=1.1"></script>
 <div class="card">
   <label for="zk-in">口座名義（ふりがな・カタカナ・英字。「株式会社」などの漢字の法人名もOK）</label>
   <textarea id="zk-in" rows="4" placeholder="例）カブシキガイシャ　ツールバコ&#10;例）やまだ　たろう&#10;例）株式会社サンプル商事">カブシキガイシャ　ツールバコ</textarea>
@@ -46,8 +46,18 @@
 <script>
 (function () {
   var $ = TB.$;
-  /* [かな表記の揺れ, 漢字表記, 略語] */
+  /* [かな表記の揺れ, 漢字表記, 略語]。出典: 東京都・大阪市の「法人略語一覧」 */
   var ABBR = [
+    ['シャカイイリョウホウジン', '社会医療法人', 'ｲ'],
+    ['チホウドクリツギョウセイホウジン', '地方独立行政法人', 'ﾁﾄﾞｸ'],
+    ['ベンゴシホウジン', '弁護士法人', 'ﾍﾞﾝ'],
+    ['シホウショシホウジン', '司法書士法人', 'ｼﾎｳ'],
+    ['ギョウセイショシホウジン', '行政書士法人', 'ｷﾞﾖ'],
+    ['シャカイホケンロウムシホウジン', '社会保険労務士法人', 'ﾛｳﾑ'],
+    ['ノウジクミアイホウジン', '農事組合法人', 'ﾉｳ'],
+    ['カンリクミアイホウジン', '管理組合法人', 'ｶﾝﾘ'],
+    ['コウセイホゴホウジン', '更生保護法人', 'ﾎｺﾞ'],
+    ['コクリツダイガクホウジン|コウリツダイガクホウジン', '国立大学法人|公立大学法人', 'ﾀﾞｲ'],
     ['カブシキガイシャ|カブシキカイシャ', '株式会社', 'ｶ'],
     ['ユウゲンガイシャ|ユウゲンカイシャ', '有限会社', 'ﾕ'],
     ['ゴウメイガイシャ|ゴウメイカイシャ', '合名会社', 'ﾒ'],
@@ -67,23 +77,24 @@
 
   var ALLOWED = /[0-9A-Zｱ-ﾝｦﾞﾟ ().\-\/\\,｢｣]/;
 
+  /* 略語は1法人名につき1個。いちばん長く一致する法人格だけを置換する（社会医療法人を「医療法人」と誤認しない） */
+  var WORDS = [];
+  ABBR.forEach(function (a) {
+    a[0].split('|').concat(a[1].split('|')).forEach(function (w) { WORDS.push([w, a[2]]); });
+  });
+  WORDS.sort(function (x, y) { return y[0].length - x[0].length; });
+
   function applyAbbr(s) {
-    var found = [];
-    ABBR.forEach(function (a) {
-      var words = a[0].split('|').concat(a[1].split('|'));
-      words.sort(function (x, y) { return y.length - x.length; });
-      words.forEach(function (w) {
-        var i = s.indexOf(w);
-        if (i < 0) return;
-        var before = s.slice(0, i).trim(), after = s.slice(i + w.length).trim(), rep;
-        if (!before) rep = a[2] + ')';
-        else if (!after) rep = '(' + a[2];
-        else rep = '(' + a[2] + ')';
-        s = (before ? before : '') + rep + (after ? after : '');
-        found.push(w + ' → ' + rep);
-      });
-    });
-    return { s: s, found: found };
+    for (var k = 0; k < WORDS.length; k++) {
+      var w = WORDS[k][0], ab = WORDS[k][1], i = s.indexOf(w);
+      if (i < 0) continue;
+      var before = s.slice(0, i).trim(), after = s.slice(i + w.length).trim(), rep;
+      if (!before) rep = ab + ')';
+      else if (!after) rep = '(' + ab;
+      else rep = '(' + ab + ')';
+      return { s: before + rep + after, found: [w + ' → ' + rep] };
+    }
+    return { s: s, found: [] };
   }
 
   function convertOne(src, opt) {
@@ -123,7 +134,7 @@
       outs.push(r.out);
       var head = lines.length > 1 ? (n + 1) + '行目: ' : '';
       if (r.found.length) rep.push(head + '<span class="ok">法人略語 ' + TB.esc(r.found.join('、')) + '</span>');
-      if (r.bad.length) rep.push(head + '<span class="err">使えない文字があります: ' + r.bad.map(function (c) { return '<mark class="bad">' + TB.esc(c) + '</mark>'; }).join(' ') + '（漢字はふりがなで入力してください）</span>');
+      if (r.bad.length) rep.push(head + '<span class="err">使えない文字があります: ' + r.bad.map(function (c) { return '<mark class="bad">' + TB.esc(c) + '</mark>'; }).join(' ') + '（漢字はふりがなで入力し、記号は ( ) . - / , ｢ ｣ \\ のどれかに置き換えてください）</span>');
       rep.push(head + '文字数 ' + r.len + ' 桁' + (r.len > 30 ? ' <span class="err">— 全銀フォーマットの受取人名（30桁）を超えています</span>' : ''));
     });
     $('zk-out').value = outs.join('\n');
@@ -141,6 +152,26 @@
   <li>変換結果をコピーして、ネットバンキングや会計ソフトの「受取人名」欄に貼り付けます。</li>
 </ol>
 <p>複数の名義をまとめて変換したい場合は「1行ずつ変換」にチェックを入れ、1行に1名義ずつ入力してください。総合振込・給与振込のデータ作成で便利です。</p>
+
+<h2>例: 総合振込の受取人名をまとめて直す</h2>
+<p>取引先台帳（Excel）の「フリガナ」列をそのまま貼り付けた場合の変換例です（名義はすべて架空です）。</p>
+<ol>
+  <li>Excel でフリガナ列を選んでコピーし、「1行ずつ変換」にチェックを入れて上の欄に貼り付けます。</li>
+  <li>下の報告欄で、略語の置換・使えない文字・30桁超えの行を確認します。</li>
+  <li>「結果をコピー」して、Excel の受取人名列に貼り付けます（行の順番はそのままです）。</li>
+</ol>
+<div class="scroll"><table>
+  <tr><th>使用前（台帳のフリガナ）</th><th>使用後</th><th>報告欄</th></tr>
+  <tr><td>カブシキガイシャ　ヤマダショウジ</td><td>ｶ)ﾔﾏﾀﾞｼﾖｳｼﾞ</td><td>略語 ｶ)・小さい「ョ」→ﾖ</td></tr>
+  <tr><td>やまだ　はなこ</td><td>ﾔﾏﾀﾞ ﾊﾅｺ</td><td></td></tr>
+  <tr><td>医療法人社団　さくらかい</td><td>ｲ)ｻｸﾗｶｲ</td><td>略語 ｲ)</td></tr>
+  <tr><td>合同会社グリーンファーム</td><td>ﾄﾞ)ｸﾞﾘ-ﾝﾌｱ-ﾑ</td><td>略語 ﾄﾞ)・長音→ハイフン・小さい「ァ」→ｱ</td></tr>
+  <tr><td>有限会社　オオタ・デンキ</td><td>ﾕ)ｵｵﾀ.ﾃﾞﾝｷ</td><td>中点「・」→ピリオド</td></tr>
+  <tr><td>ＮＰＯ法人　ミライ</td><td>ﾄｸﾋ)ﾐﾗｲ</td><td>略語 ﾄｸﾋ)</td></tr>
+  <tr><td>サンプルセンター株式会社トウキョウシテン</td><td>ｻﾝﾌﾟﾙｾﾝﾀ-(ｶ)ﾄｳｷﾖｳｼﾃﾝ</td><td>名称の途中の略語は (ｶ)</td></tr>
+  <tr><td>ﾀﾅｶ ｹﾝ＆ｶﾝﾊﾟﾆｰ</td><td>ﾀﾅｶ ｹﾝ&amp;ｶﾝﾊﾟﾆ-</td><td><span class="err">「&amp;」は使えない文字</span> → 手で直す</td></tr>
+</table></div>
+<p><strong>注意点</strong>: 変換結果は「銀行に登録されている口座名義」と一致するとは限りません。特に、法人の名義に営業所名が入るか、「ｦ」「ﾌｱ」などをどう登録しているかは口座ごとに違います。初めての振込先は、請求書や通帳のコピーに書かれた口座名義と照らし合わせてください。</p>
 
 <h2>変換のルール</h2>
 <table>
@@ -164,8 +195,15 @@
   <tr><td>特定非営利活動法人（NPO）</td><td>ﾄｸﾋ</td><td>社会福祉法人</td><td>ﾌｸ</td></tr>
   <tr><td>学校法人</td><td>ｶﾞｸ</td><td>宗教法人</td><td>ｼﾕｳ</td></tr>
   <tr><td>独立行政法人</td><td>ﾄﾞｸ</td><td>税理士法人</td><td>ｾﾞｲ</td></tr>
+  <tr><td>社会医療法人・医療法人社団／財団</td><td>ｲ</td><td>地方独立行政法人</td><td>ﾁﾄﾞｸ</td></tr>
+  <tr><td>弁護士法人</td><td>ﾍﾞﾝ</td><td>司法書士法人</td><td>ｼﾎｳ</td></tr>
+  <tr><td>行政書士法人</td><td>ｷﾞﾖ</td><td>社会保険労務士法人</td><td>ﾛｳﾑ</td></tr>
+  <tr><td>農事組合法人</td><td>ﾉｳ</td><td>管理組合法人</td><td>ｶﾝﾘ</td></tr>
+  <tr><td>更生保護法人</td><td>ﾎｺﾞ</td><td>国立大学法人・公立大学法人</td><td>ﾀﾞｲ</td></tr>
+  <tr><td>相互会社</td><td>ｿ</td><td></td><td></td></tr>
 </table>
-<p class="note">※ 略語や使える文字の細かな扱いは、金融機関によって異なる場合があります。最終的には振込先から受け取った口座名義の表記、またはお使いの金融機関の案内に合わせてください。</p>
+<p>略語は1つの名義につき1つだけ使います。「社会医療法人」のように別の法人格を含む名前は、いちばん長く一致する法人格（社会医療法人 → ｲ）で置換します。</p>
+<p class="note">※ 対応しているのは上の表の法人格だけです。営業所（支店・出張所など）や事業（協同組合・生命保険など）の略語には対応していません。表にない法人格が漢字のまま残った場合は「使えない文字」として表示されます。略語や使える文字の細かな扱いは、金融機関によって異なる場合があります。最終的には振込先から受け取った口座名義の表記、またはお使いの金融機関の案内に合わせてください。出典: 東京都・大阪市が公表している法人略語一覧。</p>
 
 <h2>よくある質問</h2>
 <details><summary>「ッ」や「ャ」をそのまま入力するとエラーになるのはなぜ？</summary><p>全銀協が定める振込データの規定文字には小さい文字が含まれないため、多くの銀行ではエラーになります。このツールでは自動で ﾂ・ﾔ などの大きい文字に置き換えます。</p></details>
@@ -173,9 +211,9 @@
 <details><summary>名義が30文字を超えてしまいます。</summary><p>全銀フォーマットの受取人名欄は30桁です（濁点・半濁点も1桁）。超える場合は、金融機関の案内に従って法人略語を使うか、末尾を省略してください。</p></details>
 <details><summary>入力した名義はどこかに送信されますか？</summary><p>送信されません。変換はすべてお使いのブラウザの中で行われ、ページを閉じれば消えます。</p></details>
 
-<div class="cta"><b>オフライン版（全16ツール・1ファイル）</b><br>
-社内ネットワークの外に出られないPCや、外部サイトの利用が制限された職場でも使えるよう、全ツールを1つのHTMLファイルにまとめました。ダブルクリックで開くだけ、インストール不要です。
-<a href="../offline/">詳しく見る →</a></div>
+<div class="cta"><b>オフライン版 v1.0（14ツール・1ファイル）</b><br>
+外部サイトの利用が制限された職場やネットワークにつながらないPCで使えるよう、ツールを1つのHTMLファイルにまとめた有料版です。このツールも収録しています。
+<a href="../offline/">収録内容と動作確認の範囲を見る →</a></div>
 <h2>関連ツール</h2>
 <div class="grid"><a class="tile" href="../zenkaku-hankaku/"><b>全角・半角 変換ツール</b><small>英数字・カタカナ・記号・スペースを、種類ごとに選んで全角⇔半角に一括変換。住所や名簿の表記ゆれ統一に。</small></a><a class="tile" href="../izon-moji/"><b>機種依存文字チェッカー</b><small>①・㈱・㍉・髙・﨑・絵文字など、システムやメールで化けやすい文字を色付きで検出し、ワンクリックで安全な文字に置換。</small></a><a class="tile" href="../moji-count/"><b>文字数カウント（バイト数・原稿用紙・X換算）</b><small>文字数・空白を除いた文字数・行数に加え、Shift_JIS／UTF-8のバイト数、原稿用紙の枚数、X（旧Twitter）の文字数まで一度に表示。</small></a></div>
 </main>
