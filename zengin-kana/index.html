@@ -135,6 +135,7 @@
       var head = lines.length > 1 ? (n + 1) + '行目: ' : '';
       if (r.found.length) rep.push(head + '<span class="ok">法人略語 ' + TB.esc(r.found.join('、')) + '</span>');
       if (r.bad.length) rep.push(head + '<span class="err">使えない文字があります: ' + r.bad.map(function (c) { return '<mark class="bad">' + TB.esc(c) + '</mark>'; }).join(' ') + '（漢字はふりがなで入力し、記号は ( ) . - / , ｢ ｣ \\ のどれかに置き換えてください）</span>');
+      if (r.out.indexOf(',') >= 0) rep.push(head + '<span class="err">「,」（カンマ）は、総合振込・給与振込では使えない金融機関があります（例: あいち銀行は通常の振込のみ可）</span>');
       rep.push(head + '文字数 ' + r.len + ' 桁' + (r.len > 30 ? ' <span class="err">— 全銀フォーマットの受取人名（30桁）を超えています</span>' : ''));
     });
     $('zk-out').value = outs.join('\n');
@@ -181,7 +182,7 @@
   <tr><td>ャ ュ ョ ッ ァ などの小さい文字</td><td>ﾔ ﾕ ﾖ ﾂ ｱ</td><td>全銀協の規定文字に小書き文字は含まれません</td></tr>
   <tr><td>長音「ー」</td><td>ﾊｲﾌﾝ「-」</td><td>長音記号は規定文字外のため</td></tr>
   <tr><td>英小文字 a〜z</td><td>英大文字 A〜Z</td><td>小文字は規定文字外のため</td></tr>
-  <tr><td>（ ） ． ／ ， 「 」 ￥</td><td>( ) . / , ｢ ｣ \</td><td>使える記号は半角に統一</td></tr>
+  <tr><td>（ ） ． ／ ， 「 」 ￥</td><td>( ) . / , ｢ ｣ \</td><td>使える記号は半角に統一（「,」は総合振込・給与振込で使えない金融機関があるため、報告欄で警告します）</td></tr>
 </table>
 
 <h2>法人略語の付け方</h2>
